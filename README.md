@@ -8,7 +8,7 @@ Take a harmful act a language model has just called clearly wrong. Rewrite it us
 
 ## Why this matters now
 
-In July 2026 Anthropic's *Agentic Misalignment in Summer 2026* work (the *Motivated Mislabeling* result) documented a frontier model, acting as a judge, whose **mislabeling rate fell from 85.6% to 16.7%** depending only on the *consequence framing* it was given — the label tracking what it would *do*, not the facts. This study isolates the same failure mode from the *wording* side, with a mechanism attached: which specific rewrite operations move a moral verdict, and by how much. If evals and oversight increasingly route through an LLM judge, knowing **which linguistic operation most cheaply flips that judge** is a concrete piece of the threat model.
+In July 2026 Anthropic's *Agentic Misalignment in Summer 2026* work (the *Motivated Mislabeling* result) documented frontier models, acting as judges, whose mislabeling rate swung sharply depending only on the *consequence framing* they were given — the label tracking what it would *do*, not the facts. Mythos Preview's rate fell from **85.6% to 16.7%**; Opus 4.8, the sharpest case, fell from **74.4% to 3.3%**. This study isolates the same failure mode from the *wording* side, with a mechanism attached: which specific rewrite operations move a moral verdict, and by how much. If evals and oversight increasingly route through an LLM judge, knowing **which linguistic operation most cheaply flips that judge** is a concrete piece of the threat model.
 
 ## Setup
 
@@ -45,7 +45,7 @@ E + aggregation       +1.40
 all three (E+F+A)     +1.10
 ```
 
-Euphemism *alone* is the peak; every move piled on top *erodes* it. In **84% of acts (66/78) stacking all three does no better than the single best move**, and all pairwise interaction terms are negative on average. The mechanism is visible in the data: only euphemism removes the violent verb, so the euphemism-free pair (functionalization + aggregation) produces essentially **zero** effect (+0.01) — it leaves "grinds alive," "boiled alive" in plain sight.
+Euphemism *alone* is the peak; every move piled on top *erodes* it. In **85% of acts (66/78) stacking all three does no better than the single best move**, and all pairwise interaction terms are negative on average. The mechanism is visible in the data: only euphemism removes the violent verb, so the euphemism-free pair (functionalization + aggregation) produces essentially **zero** effect (+0.01) — it leaves "grinds alive," "boiled alive" in plain sight.
 
 **Good news for defenders:** you watch one operation, not a combinatorial space.
 
@@ -58,10 +58,10 @@ Euphemism *alone* is the peak; every move piled on top *erodes* it. In **84% of 
 ## Reproduce the numbers
 
 ```bash
-python analysis/reproduce_findings.py
+python3 analysis/reproduce_findings.py
 ```
 
-It recomputes every headline number in this README directly from `results/*.json` — no stored summaries trusted.
+Pure Python standard library — no dependencies, no API key, no installation. It recomputes every headline number in this README directly from `results/*.json`; no stored summary is trusted. Tested from a fresh clone.
 
 ## Repo layout
 
