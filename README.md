@@ -95,6 +95,11 @@ Euphemism *alone* is the peak; every move piled on top *erodes* it. In **85% of 
 - **We do not reproduce any existing benchmark's corpus or findings.** We generalize a detect-versus-condemn methodology to a different question.
 - **Propagation into trained weights is not demonstrated.** We show the judge-side vulnerability. We do not train a reward model on rewritten preference pairs and measure the resulting policy shift — that experiment isn't in this repo, and the pipeline-poisoning framing above is inferential until someone runs it.
 
+## Interactive demo
+
+**https://huggingface.co/spaces/LarytheLord/values-laundering-explorer** — browse the acts,
+their six framing rewrites, and how each judge scored them.
+
 ## Reproduce the numbers
 
 ```bash
