@@ -15,8 +15,20 @@ import json, os, random, statistics as st
 random.seed(20260803)
 # Raw judged files live in JUDGe-2026/data/. Same path bug as consolidate_all.py
 # had: pointing at the project root found nothing and crashed on first load.
-ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
-load = lambda n: json.load(open(os.path.join(ROOT, n)))
+_BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Raw judged files are split across two directories: the ten-family replication lives in
+# data/, the original three findings in results/. An earlier version looked only in data/,
+# so a fresh clone crashed on the first load even though the file was sitting in results/.
+# Look in both, and say which paths were tried if it is genuinely missing.
+_DIRS = [os.path.join(_BASE, "data"), os.path.join(_BASE, "results")]
+
+
+def load(n):
+    for d in _DIRS:
+        p = os.path.join(d, n)
+        if os.path.exists(p):
+            return json.load(open(p))
+    raise FileNotFoundError(f"{n} not found in " + " or ".join(_DIRS))
 B = 10000
 
 
