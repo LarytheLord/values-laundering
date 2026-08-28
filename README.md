@@ -95,6 +95,15 @@ Euphemism *alone* is the peak; every move piled on top *erodes* it. In **85% of 
 - **We do not reproduce any existing benchmark's corpus or findings.** We generalize a detect-versus-condemn methodology to a different question.
 - **Propagation into trained weights is not demonstrated.** We show the judge-side vulnerability. We do not train a reward model on rewritten preference pairs and measure the resulting policy shift — that experiment isn't in this repo, and the pipeline-poisoning framing above is inferential until someone runs it.
 
+## Exploration environment
+
+`environment/` turns the act bank and judge panel into something an agent can act *in*,
+rather than a table to read — probe an (operator, judge) cell, get feedback, decide what to
+probe next, budget-limited. Runs offline in replay mode against the frozen judged data
+above, no API key or network needed. See `environment/README.md`, including a documented
+exploitation bug found and fixed in the reference agent, left on the record rather than
+smoothed over.
+
 ## Interactive demo
 
 **https://huggingface.co/spaces/LarytheLord/values-laundering-explorer** — browse the acts,
@@ -113,10 +122,11 @@ All three are pure Python standard library — no dependencies, no API key, no i
 ## Repo layout
 
 ```
-results/    the original 3 findings' judged data
-data/       the 10-family replication's raw judged data + ALL_FAMILIES.json (regenerated summary)
-kernels/    the Gemma-2-9b judge kernels that ran on a free Kaggle GPU
-analysis/   reproduce_findings.py, stats_rigor.py
+results/      the original 3 findings' judged data
+data/         the 10-family replication's raw judged data + ALL_FAMILIES.json (regenerated summary)
+kernels/      the Gemma-2-9b judge kernels that ran on a free Kaggle GPU
+analysis/     reproduce_findings.py, stats_rigor.py
+environment/  the exploration environment -- an agent probes (operator, judge) cells for feedback
 consolidate_all.py   regenerates data/ALL_FAMILIES.json from the raw per-family files
 ```
 
