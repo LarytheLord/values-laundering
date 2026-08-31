@@ -190,8 +190,22 @@ class Environment:
         }
 
     # ---- what the agent can do -------------------------------------------
-    def step(self, judge_key, move, n=1):
-        """Probe one cell n times. Returns feedback. Costs budget only on real probes."""
+    def step(self, judge_key, move, n=1, observation=None):
+        """Probe one cell n times. Returns feedback. Costs budget only on real probes.
+
+        observation, if given, is a compact snapshot of what the caller observed
+        before deciding to call step(judge_key, move) -- e.g. the agent's `why`
+        string, the breadth/depth phase, budget_left at decision time, and (for
+        depth picks) which judge/operator was the current leader being deepened.
+        It is attached verbatim to every record this call logs, under the key
+        "agent_observation". This is how the log captures what the agent SAW
+        and not just what it did: Environment cannot reconstruct this itself,
+        because by the time step() runs it has already spent budget and mutated
+        self.results, so only the caller -- the one who called observe() and
+        made the decision -- can report what the decision was actually based on.
+        Callers that do not pass observation get "agent_observation": null,
+        which is still explicit about the gap rather than silent about it.
+        """
         if judge_key not in self.valid:
             raise ValueError(f"{judge_key} is not instrument-valid; it cannot be probed")
         if move not in MOVES:
@@ -208,7 +222,8 @@ class Environment:
             self.spent += 1
             rec = {"step_id": self.step_id, "operator": move, "composition": [move],
                    "act_id": a["act_id"], "domain": a["domain"], "judge": judge_key,
-                   "judge_version": judge.version, "seed": self.seed}
+                   "judge_version": judge.version, "seed": self.seed,
+                   "agent_observation": observation}
 
             ov = overlap(a["act"], a["moves"][move])
             if ov < OVERLAP_FLOOR:
@@ -299,6 +314,14 @@ def greedy_agent(env, rounds=12):
     small-n. That's exploitation without the matching exploration.) The depth
     half of the policy is only expressible because observe() reports
     best_move_so_far, which is a function of the agent's own earlier steps.
+
+    The observation that drives each decision (why, breadth/depth phase,
+    budget_left, and for depth picks the judge/operator being deepened) is
+    passed straight into env.step() as `observation`, so it lands in the
+    JSONL log next to the action it produced -- not just kept in `trace`,
+    which only ever reached the console under --selftest and was never
+    persisted. That was the traceability gap: the log showed what the agent
+    DID, never what it SAW that made it do that.
     """
     trace = []
     depth_visits = 0
@@ -309,13 +332,55 @@ def greedy_agent(env, rounds=12):
         if o["unprobed"]:
             jk, mv = o["unprobed"][0].split("|")
             why = "breadth: unprobed cell"
+            observation = {"why": why, "phase": "breadth",
+                           "budget_left": o["budget_left"]}
         else:
             valid = o["judges_valid"]
             jk = valid[depth_visits % len(valid)]
             depth_visits += 1
             mv = o["best_move_so_far"].get(jk, "euphemism")
             why = f"depth: current leader for {jk}"
-        fb = env.step(jk, mv, n=6)
+            observation = {"why": why, "phase": "depth",
+                           "budget_left": o["budget_left"],
+                           "depth_leader_judge": jk, "depth_leader_operator": mv}
+        fb = env.step(jk, mv, n=6, observation=observation)
+        trace.append({"judge": jk, "move": mv, "why": why,
+                      "mean_delta": fb["mean_delta"], "scored": fb["scored"],
+                      "rejected": fb["rejected"], "flips": fb["binary_flips"],
+                      "gap": fb["gap_to_second"]})
+    return trace
+
+
+def random_agent(env, rounds=12):
+    """The reference-frame baseline the GOAI rules ask for as one of the three
+    mandatory deliverables: a "trivial solution" / "random exploration"
+    comparison point (参照系可以是随机探索、平凡解或简单基线). Environment already
+    has a statistical version of this in baseline_null_model() -- a shuffle of
+    already-collected deltas -- but that is not an actual agent taking its own
+    steps through the loop. This is: it is the same kind of thing greedy_agent
+    is, run through the same observe()/step() loop, so its trace is directly
+    comparable to greedy_agent's trace and not just to a distribution.
+
+    Policy: at every step, pick a uniformly random valid judge from
+    judges_valid and a uniformly random operator from MOVES. No breadth/depth
+    distinction, no use of best_move_so_far or coverage -- that asymmetry is
+    exactly what greedy_agent is being compared against, so this policy must
+    not smuggle any of it back in. Uses env.rng (the same seeded PRNG the
+    environment already uses for pool shuffling in step()) rather than the
+    global random module, so a run is reproducible from env.seed alone, same
+    as the rest of the environment.
+    """
+    trace = []
+    for _ in range(rounds):
+        o = env.observe()
+        if o["budget_left"] <= 0:
+            break
+        valid = o["judges_valid"]
+        jk = env.rng.choice(valid)
+        mv = env.rng.choice(MOVES)
+        why = "random exploration baseline"
+        observation = {"why": why, "phase": "random", "budget_left": o["budget_left"]}
+        fb = env.step(jk, mv, n=6, observation=observation)
         trace.append({"judge": jk, "move": mv, "why": why,
                       "mean_delta": fb["mean_delta"], "scored": fb["scored"],
                       "rejected": fb["rejected"], "flips": fb["binary_flips"],

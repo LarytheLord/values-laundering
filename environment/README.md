@@ -78,14 +78,44 @@ this environment's per-act paired deltas over a budget-limited campaign are a di
 smaller-sample statistic computed a different way. Reconciling the two exactly is open work,
 noted here rather than left implicit.
 
+## A random-exploration baseline, for comparison against the policy above
+
+`run_random_baseline.py` runs `random_agent()` (also in `env.py`): a uniformly random
+(judge, operator) pick every step, no breadth/depth logic. Same 3 seeds, same budget=2000 as
+the real campaign, writing to its own files so nothing above is touched or overwritten.
+
+Under random exploration, euphemism is rank-1 in **8-9 of 9** (judge, seed) cells: it's
+simply the strongest single operator on this bank, findable by undirected breadth alone. The
+real greedy policy above only picks euphemism in **5 of 9** cells. Read that correctly: the
+policy's actual exploration value is the cells where it *diverges* from that obvious default
+and finds a genuinely different, judge-specific leader instead — which is exactly what the
+round-robin fix above made visible in the first place, not a weaker result than random search.
+One counter-example, stated plainly rather than hidden: seed 42/`olmo3-7b`, random's gap was
+smaller than greedy's. No null-model significance check has been run against the random
+numbers yet.
+
+## Run it, one-click entry points
+
+```bash
+bash scripts/smoke_test.sh        # wraps env.py --selftest, checks required data files first
+bash scripts/reproduce_core.sh    # wraps run_campaign.py, prints each seed's final gaps at the end
+```
+
+Both are thin wrappers around the commands above — no new logic, just sanity checks and a
+readable pass/fail instead of a raw traceback if something's missing.
+
 ## Files
 
 ```
-env.py                              the environment: Bank, ReplayJudge, Environment, greedy_agent, selftest
+env.py                              the environment: Bank, ReplayJudge, Environment, greedy_agent, random_agent, selftest
 run_campaign.py                     the non-toy run: budget=2000, seeds 0/1/42, writes campaign_summary.json
+run_random_baseline.py              the random-exploration baseline described above
 campaign_summary.json               per-seed summary: cells probed, gaps, rejection rate, null-model baseline
+random_baseline_summary.json        same, for the random-exploration baseline
 exploration_log.jsonl               the 84-record selftest trace (seed=0, budget=300)
 exploration_log_campaign_seed*.jsonl   the full immutable per-step log for each campaign seed
+exploration_log_random_seed*.jsonl     the full immutable per-step log for each random-baseline seed
+scripts/smoke_test.sh, reproduce_core.sh   one-click entry points wrapping the commands above
 ```
 
 Every step, in either mode, is appended to its log file as one immutable JSON record.
