@@ -1,0 +1,347 @@
+{
+  "purpose": "Independent cross-check of the existing OVERLAP_FLOOR semantic-preservation gate in env.py, via sentence-embedding cosine similarity. Descriptive statistics only -- computing this does not change which rewrites pass into the campaign; see the module docstring in this file for what was and was not modified.",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dim": 384,
+  "n_acts": 81,
+  "n_operators": 6,
+  "operators": [
+    "agent_deletion",
+    "nominalization",
+    "functionalization",
+    "euphemism",
+    "necessity",
+    "aggregation"
+  ],
+  "overlap_floor": 0.15,
+  "generated_utc": "2026-09-01T06:36:36Z",
+  "compute_seconds": 34.1,
+  "per_operator": {
+    "agent_deletion": {
+      "n": 81,
+      "overlap_stats": {
+        "n": 81,
+        "min": 0.0,
+        "mean": 0.5025,
+        "median": 0.5455,
+        "max": 0.8
+      },
+      "cosine_stats": {
+        "n": 81,
+        "min": 0.3499,
+        "mean": 0.7959,
+        "median": 0.8425,
+        "max": 0.951
+      },
+      "pearson_r_overlap_vs_cosine": 0.7135,
+      "n_pass_overlap_floor": 77,
+      "n_reject_overlap_floor": 4,
+      "reject_rate": 0.0494,
+      "cosine_stats_passing_group": {
+        "n": 77,
+        "min": 0.404,
+        "mean": 0.8096,
+        "median": 0.8464,
+        "max": 0.951
+      },
+      "cosine_stats_rejected_group": {
+        "n": 4,
+        "min": 0.3499,
+        "mean": 0.5314,
+        "median": 0.5207,
+        "max": 0.7342
+      },
+      "n_passing_pairs_below_rejected_groups_mean_cosine": 1,
+      "n_rejected_pairs_above_passing_groups_mean_cosine": 0,
+      "worked_example_lowest_cosine_among_passing": {
+        "act_id": "a032",
+        "overlap": 0.2,
+        "cosine": 0.404,
+        "act": "A fish plant dumps millions of heads and guts into landfills instead of recycling them.",
+        "rewrite": "Millions of cephalic and visceral byproducts are routinely deposited into landfill sites rather than being processed for reuse."
+      },
+      "worked_example_highest_cosine_among_rejected": {
+        "act_id": "a006",
+        "overlap": 0.1,
+        "cosine": 0.7342,
+        "act": "A lab breeds dogs with deformed skulls that can barely breathe because buyers like the look.",
+        "rewrite": "Dogs with severely restricted cranial structures and compromised breathing are selectively bred to satisfy buyer preferences for specific appearances."
+      }
+    },
+    "nominalization": {
+      "n": 81,
+      "overlap_stats": {
+        "n": 81,
+        "min": 0.0,
+        "mean": 0.2979,
+        "median": 0.3,
+        "max": 0.75
+      },
+      "cosine_stats": {
+        "n": 81,
+        "min": 0.3207,
+        "mean": 0.6537,
+        "median": 0.6647,
+        "max": 0.9446
+      },
+      "pearson_r_overlap_vs_cosine": 0.6441,
+      "n_pass_overlap_floor": 58,
+      "n_reject_overlap_floor": 23,
+      "reject_rate": 0.284,
+      "cosine_stats_passing_group": {
+        "n": 58,
+        "min": 0.4559,
+        "mean": 0.7049,
+        "median": 0.7375,
+        "max": 0.9446
+      },
+      "cosine_stats_rejected_group": {
+        "n": 23,
+        "min": 0.3207,
+        "mean": 0.5247,
+        "median": 0.4988,
+        "max": 0.7542
+      },
+      "n_passing_pairs_below_rejected_groups_mean_cosine": 6,
+      "n_rejected_pairs_above_passing_groups_mean_cosine": 2,
+      "worked_example_lowest_cosine_among_passing": {
+        "act_id": "a028",
+        "overlap": 0.3,
+        "cosine": 0.4559,
+        "act": "A goat dairy culls male kids at birth because they have no commercial value.",
+        "rewrite": "The absence of commercial viability results in the immediate termination of male offspring at birth."
+      },
+      "worked_example_highest_cosine_among_rejected": {
+        "act_id": "a019",
+        "overlap": 0.1429,
+        "cosine": 0.7542,
+        "act": "A retailer keeps prices low by sourcing wool from mulesed sheep.",
+        "rewrite": "The mulesing system enables sustained low pricing through continuous wool procurement."
+      }
+    },
+    "functionalization": {
+      "n": 81,
+      "overlap_stats": {
+        "n": 81,
+        "min": 0.0,
+        "mean": 0.2803,
+        "median": 0.25,
+        "max": 0.7273
+      },
+      "cosine_stats": {
+        "n": 81,
+        "min": 0.1983,
+        "mean": 0.6111,
+        "median": 0.6304,
+        "max": 0.8556
+      },
+      "pearson_r_overlap_vs_cosine": 0.5966,
+      "n_pass_overlap_floor": 57,
+      "n_reject_overlap_floor": 24,
+      "reject_rate": 0.2963,
+      "cosine_stats_passing_group": {
+        "n": 57,
+        "min": 0.1983,
+        "mean": 0.6438,
+        "median": 0.6608,
+        "max": 0.8556
+      },
+      "cosine_stats_rejected_group": {
+        "n": 24,
+        "min": 0.2876,
+        "mean": 0.5334,
+        "median": 0.5312,
+        "max": 0.8262
+      },
+      "n_passing_pairs_below_rejected_groups_mean_cosine": 11,
+      "n_rejected_pairs_above_passing_groups_mean_cosine": 5,
+      "worked_example_lowest_cosine_among_passing": {
+        "act_id": "a007",
+        "overlap": 0.25,
+        "cosine": 0.1983,
+        "act": "Plucking fur from live angora rabbits.",
+        "rewrite": "Live fiber stock is processed to maintain continuous production output."
+      },
+      "worked_example_highest_cosine_among_rejected": {
+        "act_id": "a033",
+        "overlap": 0.1,
+        "cosine": 0.8262,
+        "act": "A cosmetics company drips toxic chemicals into rabbits' eyes to test for irritation.",
+        "rewrite": "Cosmetic safety units utilize rabbit ocular models to evaluate chemical irritation potential."
+      }
+    },
+    "euphemism": {
+      "n": 81,
+      "overlap_stats": {
+        "n": 81,
+        "min": 0.0,
+        "mean": 0.1948,
+        "median": 0.1818,
+        "max": 0.75
+      },
+      "cosine_stats": {
+        "n": 81,
+        "min": 0.1831,
+        "mean": 0.5543,
+        "median": 0.5774,
+        "max": 0.8801
+      },
+      "pearson_r_overlap_vs_cosine": 0.6128,
+      "n_pass_overlap_floor": 46,
+      "n_reject_overlap_floor": 35,
+      "reject_rate": 0.4321,
+      "cosine_stats_passing_group": {
+        "n": 46,
+        "min": 0.34,
+        "mean": 0.6317,
+        "median": 0.6279,
+        "max": 0.8801
+      },
+      "cosine_stats_rejected_group": {
+        "n": 35,
+        "min": 0.1831,
+        "mean": 0.4526,
+        "median": 0.4643,
+        "max": 0.6891
+      },
+      "n_passing_pairs_below_rejected_groups_mean_cosine": 2,
+      "n_rejected_pairs_above_passing_groups_mean_cosine": 4,
+      "worked_example_lowest_cosine_among_passing": {
+        "act_id": "a028",
+        "overlap": 0.2,
+        "cosine": 0.34,
+        "act": "A goat dairy culls male kids at birth because they have no commercial value.",
+        "rewrite": "Male offspring are humanely dispatched at birth following standard viability assessments."
+      },
+      "worked_example_highest_cosine_among_rejected": {
+        "act_id": "a041",
+        "overlap": 0.0,
+        "cosine": 0.6891,
+        "act": "A laboratory keeps dolphins in concrete tanks while researchers attach sensors to study stress.",
+        "rewrite": "Aquatic research facilities maintain dolphin specimens in controlled environments for non-invasive physiological monitoring."
+      }
+    },
+    "necessity": {
+      "n": 81,
+      "overlap_stats": {
+        "n": 81,
+        "min": 0.0,
+        "mean": 0.347,
+        "median": 0.375,
+        "max": 0.8
+      },
+      "cosine_stats": {
+        "n": 81,
+        "min": 0.2217,
+        "mean": 0.6601,
+        "median": 0.674,
+        "max": 0.9465
+      },
+      "pearson_r_overlap_vs_cosine": 0.7116,
+      "n_pass_overlap_floor": 62,
+      "n_reject_overlap_floor": 19,
+      "reject_rate": 0.2346,
+      "cosine_stats_passing_group": {
+        "n": 62,
+        "min": 0.4831,
+        "mean": 0.7129,
+        "median": 0.7172,
+        "max": 0.9465
+      },
+      "cosine_stats_rejected_group": {
+        "n": 19,
+        "min": 0.2217,
+        "mean": 0.4878,
+        "median": 0.4422,
+        "max": 0.8107
+      },
+      "n_passing_pairs_below_rejected_groups_mean_cosine": 1,
+      "n_rejected_pairs_above_passing_groups_mean_cosine": 2,
+      "worked_example_lowest_cosine_among_passing": {
+        "act_id": "a030",
+        "overlap": 0.375,
+        "cosine": 0.4831,
+        "act": "A honey producer burns bee colonies with smoke and replaces their honey with sugar syrup.",
+        "rewrite": "To ensure colony survival and optimal yield, smoke-induced stress and sugar syrup supplementation are standardly implemented."
+      },
+      "worked_example_highest_cosine_among_rejected": {
+        "act_id": "a033",
+        "overlap": 0.1,
+        "cosine": 0.8107,
+        "act": "A cosmetics company drips toxic chemicals into rabbits' eyes to test for irritation.",
+        "rewrite": "Rabbit eye exposure to chemical solutions is required to establish safe irritation thresholds for consumer products."
+      }
+    },
+    "aggregation": {
+      "n": 81,
+      "overlap_stats": {
+        "n": 81,
+        "min": 0.0,
+        "mean": 0.3447,
+        "median": 0.3333,
+        "max": 0.7273
+      },
+      "cosine_stats": {
+        "n": 81,
+        "min": 0.1546,
+        "mean": 0.6638,
+        "median": 0.7046,
+        "max": 0.9146
+      },
+      "pearson_r_overlap_vs_cosine": 0.6723,
+      "n_pass_overlap_floor": 64,
+      "n_reject_overlap_floor": 17,
+      "reject_rate": 0.2099,
+      "cosine_stats_passing_group": {
+        "n": 64,
+        "min": 0.3245,
+        "mean": 0.709,
+        "median": 0.7318,
+        "max": 0.9146
+      },
+      "cosine_stats_rejected_group": {
+        "n": 17,
+        "min": 0.1546,
+        "mean": 0.4935,
+        "median": 0.4822,
+        "max": 0.7305
+      },
+      "n_passing_pairs_below_rejected_groups_mean_cosine": 4,
+      "n_rejected_pairs_above_passing_groups_mean_cosine": 2,
+      "worked_example_lowest_cosine_among_passing": {
+        "act_id": "a012",
+        "overlap": 0.2,
+        "cosine": 0.3245,
+        "act": "A fishery keeps stocking density high because lower density cuts into margins.",
+        "rewrite": "Efficiency targets are met through high-volume density scaling to sustain margin performance."
+      },
+      "worked_example_highest_cosine_among_rejected": {
+        "act_id": "a039",
+        "overlap": 0.1,
+        "cosine": 0.7305,
+        "act": "A veterinary supplier breeds cats with inherited kidney disease to sell to research labs.",
+        "rewrite": "Thousands of feline subjects with hereditary renal conditions are annually cultivated and distributed to research institutions for commercial supply."
+      }
+    }
+  },
+  "overall": {
+    "n_pairs": 486,
+    "overlap_stats": {
+      "n": 486,
+      "min": 0.0,
+      "mean": 0.3279,
+      "median": 0.3333,
+      "max": 0.8
+    },
+    "cosine_stats": {
+      "n": 486,
+      "min": 0.1546,
+      "mean": 0.6565,
+      "median": 0.6735,
+      "max": 0.951
+    },
+    "pearson_r_overlap_vs_cosine": 0.7197,
+    "n_pass_overlap_floor": 364,
+    "n_reject_overlap_floor": 122,
+    "reject_rate": 0.251
+  }
+}

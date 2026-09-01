@@ -25,6 +25,63 @@ FEEDBACK    per-act delta, binary verdict flip (judge-provided; currently null f
             validator's verdict and reason, budget remaining
 ```
 
+### A second, independent semantic-preservation check
+
+The semantic-preservation floor above (`OVERLAP_FLOOR = 0.15`, content-word overlap) is a
+single signal from a single method: bag-of-words lexical overlap. That is a weak answer, on
+its own, to "how do you know your rewrite operators are actually semantically equivalent to
+the original act?" `check_semantic_similarity.py` adds an independent cross-check: sentence-
+embedding cosine similarity (`sentence-transformers/all-MiniLM-L6-v2`, small, free, CPU-only,
+no API key) for every (literal act, rewrite) pair across all six operators in the frozen
+81-act bank (486 pairs total). It is a standalone script, run once, that reads the bank and
+writes `semantic_similarity_report.json` — **it does not touch `OVERLAP_FLOOR`, `overlap()`,
+or any accept/reject logic in `env.py`**, and it does not change which rewrites passed into
+the campaign already run. It is a new reported statistic, not a new filter.
+
+Real numbers, computed from all 486 pairs:
+
+| operator | mean cosine | median cosine | overlap-floor reject rate | r(overlap, cosine) |
+|---|---:|---:|---:|---:|
+| agent_deletion | 0.796 | 0.843 | 4.9% | 0.71 |
+| nominalization | 0.654 | 0.665 | 28.4% | 0.64 |
+| functionalization | 0.611 | 0.630 | 29.6% | 0.60 |
+| euphemism | 0.554 | 0.577 | 43.2% | 0.61 |
+| necessity | 0.660 | 0.674 | 23.5% | 0.71 |
+| aggregation | 0.664 | 0.705 | 21.0% | 0.67 |
+| **overall (n=486)** | 0.657 | 0.674 | 25.1% | **0.72** |
+
+**Where the two signals agree.** The overall Pearson correlation between word-overlap and
+embedding cosine similarity is 0.72 — moderate-to-strong, and positive for every operator
+individually (0.60–0.71). The overlap-floor reject rate computed here, deterministically
+from the 81-act bank, reproduces the campaign-log reject rates in the table above almost
+exactly (euphemism 43.2% here vs. 42–44% measured from the actual per-step JSONL logs across
+three seeds) — a useful cross-check in its own right, since the two numbers come from
+different code paths (a static pass over the bank vs. probabilistic per-step sampling during
+a real campaign) and land in the same place.
+
+**Where they disagree, stated honestly rather than smoothed over.** 25 of the 364 pairs
+(6.9%) that PASS the word-overlap floor score a lower embedding cosine similarity than their
+own operator's *rejected*-group mean — i.e., embeddings read them as less semantically
+similar than a typical item the overlap floor throws out. This is worst for
+functionalization (11/57 passing pairs, 19%) and nominalization (6/58, 10%). Symmetrically,
+15 of the 122 rejected pairs (12.3%) score above their own operator's *passing*-group mean —
+worst for functionalization (5/24, 21%) and euphemism (4/35, 11%). Two concrete examples:
+euphemism act `a041` has **zero** word overlap with the literal act (would be rejected
+outright) but a cosine similarity of 0.689 — a fluent paraphrase sharing no content words
+that embeddings still read as substantially similar in meaning. Conversely, agent_deletion
+act `a032` passes the floor (overlap 0.20) but has cosine 0.404, lower than 3 of that
+operator's 4 rejected pairs. Reading this correctly: word-overlap and embedding similarity
+are measuring genuinely different things (literal vocabulary retention vs. paraphrase-level
+meaning), so some disagreement is expected and informative, not a bug in either signal —
+functionalization and nominalization are the two operators built to substitute abstract or
+technical vocabulary for the literal act's words, which is exactly where a lexical-overlap
+floor and a meaning-based one part ways most.
+
+Full per-pair data, per-operator statistics, and both worked examples above are in
+`semantic_similarity_report.json`. Run `python3 check_semantic_similarity.py` to regenerate
+it (first run downloads the ~90MB model from Hugging Face; cached after that; no other
+network access, no cost).
+
 ### Two binary-flip fields, and why there are two
 
 `step()` logs two different binary-flip signals per probe, and they are not interchangeable:
@@ -86,6 +143,17 @@ already found move the score more, on judges where the literal-score population 
 enough to the 4.0 gate that a large delta is more likely to cross it. This is a descriptive
 statistic about the campaign already run, not a new claim about operator effectiveness beyond
 what the deltas above already show.
+
+## Config, as a standalone artifact
+
+`run_config.json` is a versioned config artifact, distinct from the values hardcoded inline
+in `run_campaign.py`/`env.py`: budget, seeds, the instrument-validity gate, the
+semantic-preservation floor, the threshold-flip definition, per-judge model version strings,
+and a sha256 of each frozen data file the official runs read
+(`data/recency_results.json`, `data/kernel_payload.json`). This is the "config" link in the
+traceability chain code version -> config -> data version -> Agent trajectory -> results
+file, kept separate from the code so a reviewer can diff a run's actual parameters without
+reading source.
 
 ## Run it
 
@@ -174,12 +242,16 @@ readable pass/fail instead of a raw traceback if something's missing.
 env.py                              the environment: Bank, ReplayJudge, Environment, greedy_agent, random_agent, selftest
 run_campaign.py                     the non-toy run: budget=2000, seeds 0/1/42, writes campaign_summary.json
 run_random_baseline.py              the random-exploration baseline described above
+run_config.json                     standalone config artifact for the official runs above (budget, seeds, gate,
+                                     overlap floor, threshold-flip definition, judge model versions, data-file sha256s)
 campaign_summary.json               per-seed summary: cells probed, gaps, rejection rate, null-model baseline
 random_baseline_summary.json        same, for the random-exploration baseline
 exploration_log.jsonl               the 84-record selftest trace (seed=0, budget=300)
 exploration_log_campaign_seed*.jsonl   the full immutable per-step log for each campaign seed
 exploration_log_random_seed*.jsonl     the full immutable per-step log for each random-baseline seed
 scripts/smoke_test.sh, reproduce_core.sh   one-click entry points wrapping the commands above
+figures/fig_env_loop.png            the fixed/explorable/feedback loop diagram, plus make_loop_figure.py that builds it
+figures/fig_campaign_gaps.png       observed gap vs. null-model p95 per seed/judge, plus make_gap_figure.py that builds it
 ```
 
 Every step, in either mode, is appended to its log file as one immutable JSON record.
