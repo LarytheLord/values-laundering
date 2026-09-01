@@ -101,7 +101,9 @@ def run_seed(seed):
         # comparison that misleads.
         "null_model_by_judge": null_by_judge,
         "cells": cells,
-        "log_path": log_path,
+        # Recorded relative to this file, not absolute: an absolute path is
+        # specific to the machine that ran it and is not reproducible for anyone else.
+        "log_path": os.path.relpath(log_path, HERE),
         "log_lines": sum(1 for _ in open(log_path)),
     }
     return summary

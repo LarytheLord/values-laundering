@@ -86,7 +86,9 @@ def run_seed(seed):
         "final_gap_by_judge": {jk: env._gap(jk) for jk in o["judges_valid"]},
         "cells": cells,
         "null_model_by_judge": null_by_judge,
-        "log_path": log_path,
+        # Recorded relative to this file, not absolute: an absolute path is
+        # specific to the machine that ran it and is not reproducible for anyone else.
+        "log_path": os.path.relpath(log_path, HERE),
         "log_lines": sum(1 for _ in open(log_path)),
     }
     return summary

@@ -155,7 +155,7 @@
         "note": "an observed gap must exceed gap_p95 to beat chance"
       }
     },
-    "log_path": "/Users/abi/Documents/AI/research/values-laundering-public/environment/exploration_log_campaign_seed0.jsonl",
+    "log_path": "exploration_log_campaign_seed0.jsonl",
     "log_lines": 2000
   },
   {
@@ -314,7 +314,7 @@
         "note": "an observed gap must exceed gap_p95 to beat chance"
       }
     },
-    "log_path": "/Users/abi/Documents/AI/research/values-laundering-public/environment/exploration_log_campaign_seed1.jsonl",
+    "log_path": "exploration_log_campaign_seed1.jsonl",
     "log_lines": 2000
   },
   {
@@ -473,7 +473,7 @@
         "note": "an observed gap must exceed gap_p95 to beat chance"
       }
     },
-    "log_path": "/Users/abi/Documents/AI/research/values-laundering-public/environment/exploration_log_campaign_seed42.jsonl",
+    "log_path": "exploration_log_campaign_seed42.jsonl",
     "log_lines": 2000
   }
 ]

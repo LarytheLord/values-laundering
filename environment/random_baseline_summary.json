@@ -156,7 +156,7 @@
         "stdev": 1.271
       }
     },
-    "log_path": "/Users/abi/Documents/AI/research/values-laundering-public/environment/exploration_log_random_seed0.jsonl",
+    "log_path": "exploration_log_random_seed0.jsonl",
     "log_lines": 2000
   },
   {
@@ -316,7 +316,7 @@
         "stdev": 1.02
       }
     },
-    "log_path": "/Users/abi/Documents/AI/research/values-laundering-public/environment/exploration_log_random_seed1.jsonl",
+    "log_path": "exploration_log_random_seed1.jsonl",
     "log_lines": 2000
   },
   {
@@ -476,7 +476,7 @@
         "stdev": 1.293
       }
     },
-    "log_path": "/Users/abi/Documents/AI/research/values-laundering-public/environment/exploration_log_random_seed42.jsonl",
+    "log_path": "exploration_log_random_seed42.jsonl",
     "log_lines": 2000
   }
 ]
