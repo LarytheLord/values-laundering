@@ -1,0 +1,40 @@
+name: environment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # The smoke test runs first and with no pip install at all, because the
+      # claim it is verifying is precisely that the core loop needs nothing
+      # beyond the standard library. If this step ever starts needing a
+      # dependency, that claim has broken and CI should say so here.
+      - name: Smoke test (stdlib only, no install)
+        run: bash environment/scripts/smoke_test.sh
+
+      - name: Install test dependencies
+        run: pip install pytest==9.0.3
+
+      - name: Unit tests
+        run: pytest environment/tests/test_env.py -v
+
+      # The selftest log is committed and is deterministic for a fixed seed.
+      # If a change silently alters what the environment records, this diff
+      # catches it even when every assertion still passes.
+      - name: Committed selftest log is unchanged
+        run: git diff --exit-code environment/exploration_log.jsonl

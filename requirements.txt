@@ -1,0 +1,30 @@
+# The core reproduction path needs NOTHING from this file.
+#
+# environment/env.py, run_campaign.py, run_random_baseline.py, and both
+# scripts/*.sh run on the Python standard library alone, against the frozen
+# judged data already in data/. That is deliberate: the environment replays
+# recorded judgments, so reproducing the campaign needs no API key, no
+# network, no GPU, and no install step. `bash environment/scripts/smoke_test.sh`
+# works on a bare python3.
+#
+# Everything below is optional, and each line says which files need it.
+
+# environment/tests/ -- the pytest regression suite
+pytest==9.0.3
+
+# environment/check_semantic_similarity.py -- the independent embedding-based
+# cross-check of the content-word overlap floor. Pulls all-MiniLM-L6-v2 on
+# first run (~90MB) and runs on CPU.
+sentence-transformers==5.3.0
+
+# analysis/*.py and environment/figures/make_*.py -- statistics and the two
+# result diagrams. The diagrams are committed as PNGs, so you only need these
+# to regenerate them.
+matplotlib==3.10.9
+numpy==2.4.4
+
+# kernels/*.py are NOT part of the reproduction path. They are the original
+# GPU judging kernels, run once on Kaggle to produce data/*.json, and they
+# need torch + transformers + a GPU. The recorded outputs they produced are
+# already in data/, which is what the environment replays. Left unpinned here
+# on purpose: rerunning them is not something this repo asks anyone to do.

@@ -2,6 +2,25 @@
 
 A small, honest, black-box study of how discourse framing bends a language model's moral verdicts. Everything here runs on free inference: no training, no gradients. Every number in this README is recomputed from the raw judged data, never copied from a draft.
 
+<details>
+<summary><b>中文简介 / Summary in Chinese</b></summary>
+
+**研究问题**：当一个有害行为本身保持不变、只改变描述它的措辞时，大模型评判器（LLM-as-judge）的道德判断会不会改变？
+
+**核心结论**：会，而且只有一种改写方式能可靠地做到。我们用批评话语分析（van Leeuwen）中的六种改写操作——委婉语、施事省略、名词化、功能化、必要性论证、聚合化——分别改写同一个行为，再让评判器重新打分。**在通过工具效度检验的全部十个模型家族中，委婉语的排名都是第一**，与第二名的差距在自助法 95% 置信区间下均不含零。模型规模更大、发布时间更新、经过安全微调，都没有表现出防护作用。
+
+**为什么重要**：大模型评判器被广泛用于筛选训练语料和为 RLHF/DPO 生成偏好数据。一个仅凭改写措辞就能被说服改变判断的评判器，构成的是训练数据投毒面，而非单纯的伦理问题——攻击不需要梯度、不需要模型权限，载荷是普通的行业用语，没有困惑度特征可供过滤器识别。
+
+**工具效度门限**：只有当一个评判器对未改写的原始行为的平均评分不高于 4.0/10 时，它才被计入统计。理由是：如果评判器本来就认为原始行为可以接受，它就没有可失去的谴责，此时的零效应测量的是工具本身而非模型。两个 IBM Granite 模型正是因此被排除——它们的数值评分认为原始行为可接受（6.28 与 5.02），而它们自己的二元判断却在 76/77 和 77/81 的样本上判定同样的行为是错的。
+
+**探索环境**（`environment/`）：把上述固定的行为库与评判器面板，变成一个智能体可以在其中行动的环境——选择探测哪个（改写操作，评判器）组合，获得反馈，再决定下一步，且受预算约束。以重放模式离线运行，**无需 API 密钥、无需联网、无需 GPU、无需安装任何依赖**。其中包含一个我们自己发现并修复的策略利用漏洞，以及一个随机探索参照系，均如实记录在案。
+
+**一键运行**：`bash environment/scripts/smoke_test.sh`
+
+**关于数据可访问性**：本仓库中的 `data/` 目录已包含全部行为库、六种改写和评判结果，无需访问任何外部平台。README 中的 Hugging Face 链接仅为可视化演示，在部分网络环境下可能无法打开，这不影响任何结果的复现。
+
+</details>
+
 ## The one-sentence result
 
 Take a harmful act a language model has just called clearly wrong. Rewrite it using one of the discourse-framing moves that critical-discourse-analysis has catalogued for decades (passive voice to hide the agent, statistics to blur the suffering, economic labels for the victims, or **euphemism** to soften the verb), and re-ask the model. **Only one of those moves reliably changes the model's verdict, and it's euphemism.** Not syntax, not aggregation, not authority-framing. Softening the *word* for the act is the load-bearing move, and stacking the others on top doesn't help; it makes things worse.
@@ -108,6 +127,13 @@ smoothed over.
 
 **https://huggingface.co/spaces/LarytheLord/values-laundering-explorer** — browse the acts,
 their six framing rewrites, and how each judge scored them.
+
+> **If that link does not load for you, nothing is missing.** Hugging Face is unreachable
+> from some networks, mainland China's among them. The Space is a convenience view; it is
+> not where the data lives. Every act, every rewrite, and every judge score this repository
+> reports is committed here under `data/`, and every number is recomputed from those files
+> by the scripts below. Clone the repo and you have the whole dataset, no external service
+> required.
 
 ## Reproduce the numbers
 
