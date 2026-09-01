@@ -3,14 +3,21 @@
 Why this file exists at all: env.py had only an integration-style
 `--selftest` smoke check before this file, which proves the loop runs but
 would not catch a wrong constant, an inverted comparison, or a field that is
-silently always None. Every test class below is aimed at one of four bug
-classes that this exact codebase actually produced:
+silently always None. Every test class below is aimed at one of the bug
+classes this exact codebase actually produced, or at a guarantee it now
+depends on:
   (1) the validity gate's boundary/exclusion logic,
   (2) greedy_agent's depth phase locking onto one judge instead of round-robin,
   (3) a judge-provided field (binary_verdict_pair) that is silently always
       null because of a key mismatch, discovered late by manual inspection,
   (4) the newer threshold_flip field, which needs to fail closed (None) on
       missing data rather than defaulting to a value that looks meaningful.
+  (5) a policy reaching for the global `random` module instead of env.rng,
+      which would silently void the same-seed-same-trajectory guarantee for
+      that policy alone and so invalidate any cross-policy comparison, and
+  (6) ucb_agent's UCB1 initialization sweep and its bounded reward scale,
+      either of which failing quietly would leave the policy looking like a
+      bandit while behaving like something else.
 A generic "does it run" test would have caught none of these; each test here
 is shaped after the specific failure, not after the function signature.
 
@@ -437,3 +444,154 @@ class TestRandomAgentUsesEnvironmentRNG:
         e = self._build_env(tmp_path, "guarded")
         trace = env.random_agent(e, rounds=6)
         assert len(trace) == 6
+
+
+# ------------------------------------------------------------------- ucb_agent
+
+def _build_three_judge_env(tmp_path, suffix, budget=1000, seed=7):
+    """Three instrument-valid judges over the same six-act synthetic bank:
+    3 x 6 = 18 UCB arms, a count the initialization tests below depend on."""
+    bank_path = _write_kernel_payload(tmp_path, SIX_ACT_TEXTS)
+    families = {
+        jk: {"model": f"{jk}-model",
+             "acts": _acts_block(SIX_ACT_TEXTS, base=2.0, rewritten=6.0, delta=1.0)}
+        for jk in ("j0", "j1", "j2")
+    }
+    _write_recency_results(tmp_path, families)
+    bank = env.Bank(path=bank_path)
+    judges = [env.ReplayJudge(jk, data_dir=str(tmp_path)) for jk in ("j0", "j1", "j2")]
+    return env.Environment(judges, bank=bank, budget=budget, seed=seed,
+                            log_path=str(tmp_path / f"log_{suffix}.jsonl"))
+
+
+class TestUCBAgentUsesEnvironmentRNG:
+    """Same defence TestRandomAgentUsesEnvironmentRNG makes, for the third
+    policy: ucb_agent breaks ties with env.rng, and if it quietly reached for
+    the global `random` module instead, the environment's reproducibility
+    guarantee (same seed -> same trajectory) would silently stop holding for
+    this policy while still holding for the other two -- which is exactly the
+    kind of asymmetry that would invalidate a three-policy comparison."""
+
+    def test_same_seed_gives_same_pick_sequence_even_if_global_random_state_differs(
+        self, tmp_path
+    ):
+        dir_a, dir_b = tmp_path / "a", tmp_path / "b"
+        dir_a.mkdir()
+        dir_b.mkdir()
+        e1 = _build_three_judge_env(dir_a, "a")
+        random.seed(1)
+        [random.random() for _ in range(50)]  # perturb the global module's state
+        trace1 = env.ucb_agent(e1, rounds=30)
+
+        e2 = _build_three_judge_env(dir_b, "b")
+        random.seed(999999)
+        [random.random() for _ in range(7)]  # perturb it differently
+        trace2 = env.ucb_agent(e2, rounds=30)
+
+        picks1 = [(t["judge"], t["move"]) for t in trace1]
+        picks2 = [(t["judge"], t["move"]) for t in trace2]
+        assert picks1 == picks2
+
+    def test_ucb_agent_never_calls_the_global_random_module(self, tmp_path, monkeypatch):
+        def _boom(*a, **k):
+            raise AssertionError("ucb_agent must use env.rng, not the global random module")
+
+        monkeypatch.setattr(env.random, "choice", _boom)
+        monkeypatch.setattr(env.random, "random", _boom)
+        e = _build_three_judge_env(tmp_path, "guarded")
+        trace = env.ucb_agent(e, rounds=25)
+        assert len(trace) == 25
+
+
+class TestUCBAgentInitialization:
+    """UCB1's regret bound assumes every arm has been pulled at least once
+    before the mean+bonus rule starts choosing; an implementation that let the
+    bonus term run with a zero pull count (or that skipped straight to the
+    argmax) would divide by zero or, worse, lock onto whichever arm happened to
+    be sampled first. This pins the initialization sweep: all 18 arms, each
+    exactly once, before any arm is pulled a second time."""
+
+    def test_every_arm_is_pulled_once_before_any_arm_is_pulled_twice(self, tmp_path):
+        e = _build_three_judge_env(tmp_path, "init")
+        n_arms = 3 * len(env.MOVES)  # 3 judges x 6 operators = 18
+        trace = env.ucb_agent(e, rounds=n_arms + 10)
+
+        init, after = trace[:n_arms], trace[n_arms:]
+        assert len(after) == 10
+        assert all(t["why"].startswith("ucb init") for t in init)
+        assert all(t["why"].startswith("ucb:") for t in after)
+
+        picks = [(t["judge"], t["move"]) for t in init]
+        assert len(set(picks)) == n_arms          # no arm pulled twice during init
+        assert all(t["arm_pulls"] == 1 for t in init)
+
+    def test_init_phase_covers_every_judge_operator_pair_exactly(self, tmp_path):
+        e = _build_three_judge_env(tmp_path, "cover")
+        n_arms = 3 * len(env.MOVES)
+        trace = env.ucb_agent(e, rounds=n_arms)
+        expected = {(jk, m) for jk in ("j0", "j1", "j2") for m in env.MOVES}
+        assert {(t["judge"], t["move"]) for t in trace} == expected
+
+
+class TestUCBRewardNormalization:
+    """UCB1's exploration bonus is only calibrated against rewards in [0, 1].
+    If normalize_delta ever returned a value outside that range the bonus would
+    be silently mis-scaled -- the arm would look better or worse than any
+    bonus could offset -- so the bounds are pinned at the extremes the frozen
+    data actually reaches, not just near the middle."""
+
+    @pytest.mark.parametrize("delta, expected", [
+        (env.DELTA_MIN, 0.0),
+        (env.DELTA_MAX, 1.0),
+        (0.0, 0.5),
+    ])
+    def test_endpoints_and_midpoint(self, delta, expected):
+        assert env.normalize_delta(delta) == pytest.approx(expected)
+
+    def test_is_order_preserving(self):
+        # The environment ranks operators by RAW mean delta (Environment._gap).
+        # A non-monotone map (e.g. clipping negatives) could make the policy
+        # optimise a different ranking than the one the environment reports.
+        deltas = [-10.0, -3.5, -0.1, 0.0, 0.1, 3.5, 10.0]
+        rewards = [env.normalize_delta(d) for d in deltas]
+        assert rewards == sorted(rewards)
+        assert all(0.0 <= r <= 1.0 for r in rewards)
+
+
+class TestUCBAgentHandlesCellsThatNeverScore:
+    """A cell whose rewrites all fail the overlap floor spends budget and
+    returns no delta, so its SCORED count stays at zero forever. An agent that
+    drove its initialization off observe()["unprobed"] -- which counts scored
+    observations -- would keep re-selecting that cell and never leave the init
+    phase. ucb_agent must count the pull, not the score."""
+
+    def test_a_permanently_rejecting_cell_does_not_stall_the_agent(self, tmp_path):
+        act_texts = [" ".join(WORDS20 + [f"unique{i}"]) for i in range(4)]
+        dead_move = env.MOVES[0]
+        # every operator's rewrite is the act text itself (overlap 1.0) except
+        # dead_move's, which keeps only 2 of the >=20 content words -> below floor
+        p = tmp_path / "kernel_payload.json"
+        p.write_text(json.dumps({"exp1": [
+            {"act": t,
+             "moves": {m: (" ".join(WORDS20[:2] + FILLER) if m == dead_move else t)
+                       for m in env.MOVES}}
+            for t in act_texts
+        ]}))
+        _write_recency_results(tmp_path, {
+            "j": {"model": "m", "acts": _acts_block(act_texts, base=2.0,
+                                                     rewritten=6.0, delta=1.0)}
+        })
+        bank = env.Bank(path=str(p))
+        judge = env.ReplayJudge("j", data_dir=str(tmp_path))
+        e = env.Environment([judge], bank=bank, budget=500, seed=3,
+                             log_path=str(tmp_path / "dead.jsonl"))
+
+        trace = env.ucb_agent(e, rounds=40)
+
+        assert len(trace) == 40                       # ran to completion, no stall
+        dead = [t for t in trace if t["move"] == dead_move]
+        assert dead, "the permanently-rejecting cell must still be pulled at least once"
+        assert all(t["scored"] == 0 and t["rejected"] > 0 for t in dead)
+        assert e.results.get(("j", dead_move)) is None  # never accumulated a delta
+        # and the init phase still ended: later rounds use the mean+bonus rule
+        assert any(t["why"].startswith("ucb:") for t in trace)

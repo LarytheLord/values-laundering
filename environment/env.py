@@ -41,6 +41,7 @@ Run the smoke test:  python3 environment/env.py --selftest
 """
 import argparse
 import json
+import math
 import os
 import random
 import statistics as st
@@ -70,6 +71,13 @@ MOVES = ["agent_deletion", "nominalization", "functionalization",
 
 GATE = 4.0          # instrument-validity gate: literal mean at or below this
 OVERLAP_FLOOR = 0.15  # semantic-preservation floor, same value as the generator
+
+# The range a single per-act delta can take. The judges score 0-10, and delta is
+# rewritten_score - literal_score, so the delta is bounded by [-10, +10] as a
+# matter of arithmetic, not of the observed sample. Checked against the frozen
+# data: the empirical min and max are exactly -10 and +10, so these are tight.
+# ucb_agent uses them to map a delta onto UCB1's assumed [0, 1] reward scale.
+DELTA_MIN, DELTA_MAX = -10.0, 10.0
 
 STOP = set("""a an the and or but if of to in on at by for with from as is are was were be been
 being it its this that these those they them their there here what which who whom whose how
@@ -433,6 +441,145 @@ def random_agent(env, rounds=12):
                       "mean_delta": fb["mean_delta"], "scored": fb["scored"],
                       "rejected": fb["rejected"], "flips": fb["binary_flips"],
                       "gap": fb["gap_to_second"]})
+    return trace
+
+
+def normalize_delta(d):
+    """Map one per-act delta onto UCB1's assumed [0, 1] reward scale.
+
+    Affine and order-preserving: (d - DELTA_MIN) / (DELTA_MAX - DELTA_MIN).
+    The choice matters and is defended in ucb_agent's docstring.
+    """
+    return (d - DELTA_MIN) / (DELTA_MAX - DELTA_MIN)
+
+
+def ucb_agent(env, rounds=12, c=1.0):
+    """UCB1 over the (judge, operator) cells: a policy that balances
+    exploration against exploitation on purpose, rather than by accident.
+
+    WHY THIS AGENT EXISTS. greedy_agent and random_agent bracket the two
+    extremes -- greedy concentrates almost all budget on the current leader
+    (realized per-operator n of 3-26 for five operators and 364-459 for one),
+    random spreads it uniformly (n of roughly 47-131 everywhere). The null
+    model in baseline_null_model conditions on the REALIZED per-operator
+    sample sizes, so a skewed allocation raises the policy's own significance
+    bar. That makes "greedy loses to random" ambiguous: it could be a fact
+    about exploration in this environment, or just a fact about one badly
+    designed policy. UCB1 is the standard principled answer to the same
+    problem, so running it here separates those two readings.
+
+    POLICY. Arms are the |judges_valid| x |MOVES| cells. Each round pulls one
+    arm for n=6 acts -- the same pull size greedy_agent and random_agent use,
+    so all three policies spend the same budget per decision and their traces
+    are directly comparable. Every arm is pulled once before any arm is pulled
+    twice (UCB1's initialization requirement, and the reason its bound holds);
+    thereafter the arm maximizing
+
+        mean_reward + c * sqrt(2 * ln(total_pulls) / pulls_of_this_arm)
+
+    is chosen. c defaults to 1.0, textbook UCB1. It is exposed rather than
+    baked in because, as the normalization note below explains, the reward
+    scale here is compressed relative to the exploration bonus, so c is the
+    knob that actually sets where this policy sits between greedy and random.
+
+    REWARD, AND WHY THIS NORMALIZATION. UCB1's regret bound assumes rewards in
+    [0, 1]; a delta here is in [-10, +10] (see DELTA_MIN/DELTA_MAX). The reward
+    for a pull is the mean of normalize_delta(d) over the deltas that pull
+    returned. That affine map was chosen over the obvious alternative -- a
+    hinge, clip(d, 0, 10) / 10, which would treat every net-harmful operator as
+    equally worthless -- for one specific reason: the hinge is not
+    order-preserving on cell means, because clipping individual negative deltas
+    changes the ranking of cell means relative to raw mean delta. The
+    environment ranks operators by raw mean delta (see _gap), so a policy
+    optimizing a clipped mean could converge on a different rank-1 than the one
+    the environment reports, which would make the comparison incoherent. The
+    affine map preserves that ordering exactly.
+    The cost of the affine map, stated rather than hidden: it divides every
+    reward difference by 20, so a 1.0 difference in mean delta -- a large
+    effect in this environment -- is a 0.05 difference in reward, while the
+    exploration bonus at these budgets is of order 0.5-1.0. Under c=1.0 the
+    bonus therefore dominates and UCB1 allocates much closer to uniform than to
+    greedy. That is a real property of this reward scale, not a bug, and it is
+    why the allocation skew this agent produces should be read alongside c.
+
+    A pull that returns no scored delta at all (every act rejected by the
+    overlap floor) still counts as a pull, and contributes nothing to the
+    reward sum -- so such a cell keeps a mean reward of 0.0, the bottom of the
+    normalized scale. That is deliberate: rejection in this environment is
+    deterministic per (act, operator) pair, so a cell that returns nothing once
+    will return nothing again, and a policy that must spend budget to learn
+    should treat it as the worst arm, not as an unexplored one. Counting it as
+    a pull is also what stops the initialization phase from looping on it
+    forever -- which is why this agent tracks its own pull counts instead of
+    reusing observe()["unprobed"], whose counts are of SCORED observations and
+    would stay at zero for such a cell.
+
+    Tie-breaking uses env.rng, never the global random module, so a run is
+    reproducible from env.seed alone -- the same guarantee random_agent gives
+    and the same one the environment's module docstring makes.
+
+    The observation passed to env.step() carries the UCB-specific state the
+    decision was actually made on (mean reward, exploration bonus, combined
+    score, this arm's pull count, total pulls, c), so the log records what the
+    agent saw and not merely which cell it picked.
+    """
+    trace = []
+    o = env.observe()
+    cells = [(jk, m) for jk in o["judges_valid"] for m in MOVES]
+    pulls = {cell: 0 for cell in cells}
+    reward_sum = {cell: 0.0 for cell in cells}
+    scored_n = {cell: 0 for cell in cells}
+    total_pulls = 0
+
+    for _ in range(rounds):
+        o = env.observe()
+        if o["budget_left"] <= 0:
+            break
+
+        unpulled = [cell for cell in cells if pulls[cell] == 0]
+        if unpulled:
+            jk, mv = env.rng.choice(unpulled)
+            why = "ucb init: every arm pulled once before any arm is pulled twice"
+            observation = {"why": why, "phase": "ucb_init",
+                           "budget_left": o["budget_left"], "ucb_c": c,
+                           "arms_unpulled": len(unpulled),
+                           "mean_reward": None, "exploration_bonus": None,
+                           "ucb_score": None, "arm_pulls": 0,
+                           "total_pulls": total_pulls}
+        else:
+            scored = {}
+            for cell in cells:
+                mean_r = (reward_sum[cell] / scored_n[cell]) if scored_n[cell] else 0.0
+                bonus = c * math.sqrt(2.0 * math.log(total_pulls) / pulls[cell])
+                scored[cell] = (mean_r, bonus, mean_r + bonus)
+            top = max(v[2] for v in scored.values())
+            tied = [cell for cell, v in scored.items() if v[2] == top]
+            jk, mv = env.rng.choice(tied)
+            mean_r, bonus, ucb = scored[(jk, mv)]
+            why = f"ucb: argmax mean+bonus over {len(cells)} arms"
+            observation = {"why": why, "phase": "ucb",
+                           "budget_left": o["budget_left"], "ucb_c": c,
+                           "arms_unpulled": 0,
+                           "mean_reward": round(mean_r, 6),
+                           "exploration_bonus": round(bonus, 6),
+                           "ucb_score": round(ucb, 6),
+                           "arm_pulls": pulls[(jk, mv)],
+                           "total_pulls": total_pulls,
+                           "n_tied_at_top": len(tied)}
+
+        fb = env.step(jk, mv, n=6, observation=observation)
+        pulls[(jk, mv)] += 1
+        total_pulls += 1
+        for d in fb["deltas"]:
+            reward_sum[(jk, mv)] += normalize_delta(d)
+            scored_n[(jk, mv)] += 1
+
+        trace.append({"judge": jk, "move": mv, "why": why,
+                      "mean_delta": fb["mean_delta"], "scored": fb["scored"],
+                      "rejected": fb["rejected"], "flips": fb["binary_flips"],
+                      "gap": fb["gap_to_second"],
+                      "arm_pulls": pulls[(jk, mv)],
+                      "ucb_score": observation["ucb_score"]})
     return trace
 
 
