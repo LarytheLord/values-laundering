@@ -1,0 +1,2684 @@
+{
+ "purpose": "Sensitivity analysis of env.py's two hardcoded constants, GATE and OVERLAP_FLOOR. Descriptive only: this script changes no accept/reject logic, re-runs no campaign, and does not construct an Environment (which would truncate exploration_log.jsonl).",
+ "defaults": {
+  "GATE": 4.0,
+  "OVERLAP_FLOOR": 0.15
+ },
+ "grids": {
+  "gate": [
+   2.0,
+   2.5,
+   3.0,
+   3.5,
+   4.0,
+   4.5,
+   5.0,
+   5.5,
+   6.0,
+   6.5,
+   7.0,
+   7.5,
+   8.0
+  ],
+  "overlap_floor": [
+   0.0,
+   0.02,
+   0.04,
+   0.06,
+   0.08,
+   0.1,
+   0.12,
+   0.14,
+   0.15,
+   0.16,
+   0.18,
+   0.2,
+   0.22,
+   0.24,
+   0.26,
+   0.28,
+   0.3,
+   0.32,
+   0.34,
+   0.36,
+   0.38,
+   0.4
+  ]
+ },
+ "n_acts": 81,
+ "operators": [
+  "agent_deletion",
+  "nominalization",
+  "functionalization",
+  "euphemism",
+  "necessity",
+  "aggregation"
+ ],
+ "judge_literal_means": {
+  "gemma4-12b": {
+   "model": "google/gemma-4-12B-it",
+   "n_literal_scores": 77,
+   "literal_mean": 0.5065,
+   "literal_median": 0
+  },
+  "gemma4-e4b": {
+   "model": "google/gemma-4-E4B-it",
+   "n_literal_scores": 81,
+   "literal_mean": 1.0741,
+   "literal_median": 1
+  },
+  "olmo3-7b": {
+   "model": "allenai/Olmo-3-7B-Instruct",
+   "n_literal_scores": 81,
+   "literal_mean": 2.642,
+   "literal_median": 3
+  },
+  "granite41-8b": {
+   "model": "ibm-granite/granite-4.1-8b",
+   "n_literal_scores": 81,
+   "literal_mean": 5.0247,
+   "literal_median": 7
+  },
+  "granite-guard": {
+   "model": "ibm-granite/granite-guardian-4.1-8b",
+   "n_literal_scores": 80,
+   "literal_mean": 6.275,
+   "literal_median": 7.0
+  },
+  "falcon-h1r": {
+   "model": "tiiuae/Falcon-H1R-7B",
+   "n_literal_scores": 0,
+   "literal_mean": null,
+   "literal_median": null
+  }
+ },
+ "operator_census_at_defaults": {
+  "gemma4-12b": {
+   "agent_deletion": {
+    "n_covered": 73,
+    "n_rejected_by_floor": 4,
+    "n_scored": 69,
+    "mean_delta": 0.058
+   },
+   "nominalization": {
+    "n_covered": 76,
+    "n_rejected_by_floor": 21,
+    "n_scored": 55,
+    "mean_delta": 0.4182
+   },
+   "functionalization": {
+    "n_covered": 74,
+    "n_rejected_by_floor": 22,
+    "n_scored": 52,
+    "mean_delta": 0.0962
+   },
+   "euphemism": {
+    "n_covered": 72,
+    "n_rejected_by_floor": 31,
+    "n_scored": 41,
+    "mean_delta": 2.2439
+   },
+   "necessity": {
+    "n_covered": 71,
+    "n_rejected_by_floor": 17,
+    "n_scored": 54,
+    "mean_delta": 1.037
+   },
+   "aggregation": {
+    "n_covered": 68,
+    "n_rejected_by_floor": 16,
+    "n_scored": 52,
+    "mean_delta": -0.2308
+   }
+  },
+  "gemma4-e4b": {
+   "agent_deletion": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 4,
+    "n_scored": 77,
+    "mean_delta": 0.2987
+   },
+   "nominalization": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 23,
+    "n_scored": 58,
+    "mean_delta": 1.3276
+   },
+   "functionalization": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 24,
+    "n_scored": 57,
+    "mean_delta": 1.1579
+   },
+   "euphemism": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 35,
+    "n_scored": 46,
+    "mean_delta": 1.7826
+   },
+   "necessity": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 19,
+    "n_scored": 62,
+    "mean_delta": 0.7419
+   },
+   "aggregation": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 17,
+    "n_scored": 64,
+    "mean_delta": 0.9062
+   }
+  },
+  "olmo3-7b": {
+   "agent_deletion": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 4,
+    "n_scored": 77,
+    "mean_delta": 0.961
+   },
+   "nominalization": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 23,
+    "n_scored": 58,
+    "mean_delta": 2.1552
+   },
+   "functionalization": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 24,
+    "n_scored": 57,
+    "mean_delta": 1.8421
+   },
+   "euphemism": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 35,
+    "n_scored": 46,
+    "mean_delta": 2.1957
+   },
+   "necessity": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 19,
+    "n_scored": 62,
+    "mean_delta": 1.2097
+   },
+   "aggregation": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 17,
+    "n_scored": 64,
+    "mean_delta": 1.5156
+   }
+  },
+  "granite41-8b": {
+   "agent_deletion": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 4,
+    "n_scored": 77,
+    "mean_delta": -0.026
+   },
+   "nominalization": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 23,
+    "n_scored": 58,
+    "mean_delta": -0.2414
+   },
+   "functionalization": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 24,
+    "n_scored": 57,
+    "mean_delta": -0.1404
+   },
+   "euphemism": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 35,
+    "n_scored": 46,
+    "mean_delta": 0.1522
+   },
+   "necessity": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 19,
+    "n_scored": 62,
+    "mean_delta": -0.9194
+   },
+   "aggregation": {
+    "n_covered": 81,
+    "n_rejected_by_floor": 17,
+    "n_scored": 64,
+    "mean_delta": 0.4844
+   }
+  },
+  "granite-guard": {
+   "agent_deletion": {
+    "n_covered": 80,
+    "n_rejected_by_floor": 4,
+    "n_scored": 76,
+    "mean_delta": -0.6184
+   },
+   "nominalization": {
+    "n_covered": 80,
+    "n_rejected_by_floor": 23,
+    "n_scored": 57,
+    "mean_delta": -0.0526
+   },
+   "functionalization": {
+    "n_covered": 80,
+    "n_rejected_by_floor": 23,
+    "n_scored": 57,
+    "mean_delta": -0.4035
+   },
+   "euphemism": {
+    "n_covered": 80,
+    "n_rejected_by_floor": 35,
+    "n_scored": 45,
+    "mean_delta": -0.5333
+   },
+   "necessity": {
+    "n_covered": 80,
+    "n_rejected_by_floor": 19,
+    "n_scored": 61,
+    "mean_delta": -1.459
+   },
+   "aggregation": {
+    "n_covered": 80,
+    "n_rejected_by_floor": 17,
+    "n_scored": 63,
+    "mean_delta": -0.6508
+   }
+  }
+ },
+ "A_gate_sensitivity": {
+  "grid": [
+   {
+    "gate": 2.0,
+    "n_valid": 2,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275,
+     "granite41-8b": 5.0247,
+     "olmo3-7b": 2.642
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.1784,
+     "nominalization": 0.8729,
+     "functionalization": 0.627,
+     "euphemism": 2.0133,
+     "necessity": 0.8894,
+     "aggregation": 0.3377
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 2.0133,
+    "rank2_operator": "necessity",
+    "gap_rank1_to_rank2": 1.1239
+   },
+   {
+    "gate": 2.5,
+    "n_valid": 2,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275,
+     "granite41-8b": 5.0247,
+     "olmo3-7b": 2.642
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.1784,
+     "nominalization": 0.8729,
+     "functionalization": 0.627,
+     "euphemism": 2.0133,
+     "necessity": 0.8894,
+     "aggregation": 0.3377
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 2.0133,
+    "rank2_operator": "necessity",
+    "gap_rank1_to_rank2": 1.1239
+   },
+   {
+    "gate": 3.0,
+    "n_valid": 3,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275,
+     "granite41-8b": 5.0247
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.4392,
+     "nominalization": 1.3003,
+     "functionalization": 1.0321,
+     "euphemism": 2.0741,
+     "necessity": 0.9962,
+     "aggregation": 0.7303
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 2.0741,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.7738
+   },
+   {
+    "gate": 3.5,
+    "n_valid": 3,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275,
+     "granite41-8b": 5.0247
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.4392,
+     "nominalization": 1.3003,
+     "functionalization": 1.0321,
+     "euphemism": 2.0741,
+     "necessity": 0.9962,
+     "aggregation": 0.7303
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 2.0741,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.7738
+   },
+   {
+    "gate": 4.0,
+    "n_valid": 3,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275,
+     "granite41-8b": 5.0247
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.4392,
+     "nominalization": 1.3003,
+     "functionalization": 1.0321,
+     "euphemism": 2.0741,
+     "necessity": 0.9962,
+     "aggregation": 0.7303
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 2.0741,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.7738
+   },
+   {
+    "gate": 4.5,
+    "n_valid": 3,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275,
+     "granite41-8b": 5.0247
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.4392,
+     "nominalization": 1.3003,
+     "functionalization": 1.0321,
+     "euphemism": 2.0741,
+     "necessity": 0.9962,
+     "aggregation": 0.7303
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 2.0741,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.7738
+   },
+   {
+    "gate": 5.0,
+    "n_valid": 3,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275,
+     "granite41-8b": 5.0247
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.4392,
+     "nominalization": 1.3003,
+     "functionalization": 1.0321,
+     "euphemism": 2.0741,
+     "necessity": 0.9962,
+     "aggregation": 0.7303
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 2.0741,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.7738
+   },
+   {
+    "gate": 5.5,
+    "n_valid": 4,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.3229,
+     "nominalization": 0.9149,
+     "functionalization": 0.7389,
+     "euphemism": 1.5936,
+     "necessity": 0.5173,
+     "aggregation": 0.6689
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 1.5936,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.6787
+   },
+   {
+    "gate": 6.0,
+    "n_valid": 4,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {
+     "granite-guard": 6.275
+    },
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.3229,
+     "nominalization": 0.9149,
+     "functionalization": 0.7389,
+     "euphemism": 1.5936,
+     "necessity": 0.5173,
+     "aggregation": 0.6689
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 1.5936,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.6787
+   },
+   {
+    "gate": 6.5,
+    "n_valid": 5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {},
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.1347,
+     "nominalization": 0.7214,
+     "functionalization": 0.5105,
+     "euphemism": 1.1682,
+     "necessity": 0.122,
+     "aggregation": 0.4049
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 1.1682,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.4468
+   },
+   {
+    "gate": 7.0,
+    "n_valid": 5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {},
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.1347,
+     "nominalization": 0.7214,
+     "functionalization": 0.5105,
+     "euphemism": 1.1682,
+     "necessity": 0.122,
+     "aggregation": 0.4049
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 1.1682,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.4468
+   },
+   {
+    "gate": 7.5,
+    "n_valid": 5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {},
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.1347,
+     "nominalization": 0.7214,
+     "functionalization": 0.5105,
+     "euphemism": 1.1682,
+     "necessity": 0.122,
+     "aggregation": 0.4049
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 1.1682,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.4468
+   },
+   {
+    "gate": 8.0,
+    "n_valid": 5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "judges_excluded": {},
+    "pooled_mean_delta_by_operator": {
+     "agent_deletion": 0.1347,
+     "nominalization": 0.7214,
+     "functionalization": 0.5105,
+     "euphemism": 1.1682,
+     "necessity": 0.122,
+     "aggregation": 0.4049
+    },
+    "rank1_operator": "euphemism",
+    "rank1_value": 1.1682,
+    "rank2_operator": "nominalization",
+    "gap_rank1_to_rank2": 0.4468
+   }
+  ],
+  "headline_robustness": {
+   "rank1_operator_at_default_gate": "euphemism",
+   "distinct_rank1_operators_across_sweep": [
+    "euphemism"
+   ],
+   "rank1_is_invariant_across_sweep": true,
+   "pooled_rank1_value_at_default_gate": 2.0741,
+   "pooled_rank1_value_at_widest_gate": 1.1682,
+   "widest_gate": 8.0,
+   "judges_at_widest_gate": [
+    "gemma4-12b",
+    "gemma4-e4b",
+    "granite-guard",
+    "granite41-8b",
+    "olmo3-7b"
+   ],
+   "attenuation_from_admitting_all_judges": 0.4368,
+   "rank1_gap_at_default_gate": 0.7738,
+   "rank1_gap_at_widest_gate": 0.4468
+  },
+  "membership_breakpoints": [
+   0.5065,
+   1.0741,
+   2.642,
+   5.0247,
+   6.275
+  ],
+  "plateau_containing_default": {
+   "gate_default": 4.0,
+   "stable_from_inclusive": 2.642,
+   "stable_until_exclusive": 5.0247,
+   "width": 2.3827,
+   "margin_below_default": 1.358,
+   "margin_above_default": 1.0247,
+   "closest_included_judge": {
+    "family": "olmo3-7b",
+    "literal_mean": 2.642,
+    "distance_below_gate": 1.358
+   },
+   "closest_excluded_judge": {
+    "family": "granite41-8b",
+    "literal_mean": 5.0247,
+    "distance_above_gate": 1.0247
+   }
+  }
+ },
+ "B_overlap_floor_sensitivity": {
+  "n_acts": 81,
+  "n_pairs": 486,
+  "grid": [
+   {
+    "floor": 0.0,
+    "overall_reject_rate": 0.0,
+    "n_rejected_total": 0,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 0,
+      "n_passing": 81,
+      "reject_rate": 0.0
+     },
+     "nominalization": {
+      "n_rejected": 0,
+      "n_passing": 81,
+      "reject_rate": 0.0
+     },
+     "functionalization": {
+      "n_rejected": 0,
+      "n_passing": 81,
+      "reject_rate": 0.0
+     },
+     "euphemism": {
+      "n_rejected": 0,
+      "n_passing": 81,
+      "reject_rate": 0.0
+     },
+     "necessity": {
+      "n_rejected": 0,
+      "n_passing": 81,
+      "reject_rate": 0.0
+     },
+     "aggregation": {
+      "n_rejected": 0,
+      "n_passing": 81,
+      "reject_rate": 0.0
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "agent_deletion",
+     "nominalization",
+     "functionalization",
+     "euphemism",
+     "necessity",
+     "aggregation"
+    ],
+    "n_distinct_rates": 1
+   },
+   {
+    "floor": 0.02,
+    "overall_reject_rate": 0.1276,
+    "n_rejected_total": 62,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 2,
+      "n_passing": 79,
+      "reject_rate": 0.0247
+     },
+     "nominalization": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "functionalization": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     },
+     "euphemism": {
+      "n_rejected": 22,
+      "n_passing": 59,
+      "reject_rate": 0.2716
+     },
+     "necessity": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "aggregation": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "aggregation",
+     "nominalization",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 4
+   },
+   {
+    "floor": 0.04,
+    "overall_reject_rate": 0.1276,
+    "n_rejected_total": 62,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 2,
+      "n_passing": 79,
+      "reject_rate": 0.0247
+     },
+     "nominalization": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "functionalization": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     },
+     "euphemism": {
+      "n_rejected": 22,
+      "n_passing": 59,
+      "reject_rate": 0.2716
+     },
+     "necessity": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "aggregation": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "aggregation",
+     "nominalization",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 4
+   },
+   {
+    "floor": 0.06,
+    "overall_reject_rate": 0.1276,
+    "n_rejected_total": 62,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 2,
+      "n_passing": 79,
+      "reject_rate": 0.0247
+     },
+     "nominalization": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "functionalization": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     },
+     "euphemism": {
+      "n_rejected": 22,
+      "n_passing": 59,
+      "reject_rate": 0.2716
+     },
+     "necessity": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "aggregation": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "aggregation",
+     "nominalization",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 4
+   },
+   {
+    "floor": 0.08,
+    "overall_reject_rate": 0.1296,
+    "n_rejected_total": 63,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 2,
+      "n_passing": 79,
+      "reject_rate": 0.0247
+     },
+     "nominalization": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "functionalization": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     },
+     "euphemism": {
+      "n_rejected": 23,
+      "n_passing": 58,
+      "reject_rate": 0.284
+     },
+     "necessity": {
+      "n_rejected": 9,
+      "n_passing": 72,
+      "reject_rate": 0.1111
+     },
+     "aggregation": {
+      "n_rejected": 10,
+      "n_passing": 71,
+      "reject_rate": 0.1235
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "aggregation",
+     "nominalization",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 4
+   },
+   {
+    "floor": 0.1,
+    "overall_reject_rate": 0.1564,
+    "n_rejected_total": 76,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 2,
+      "n_passing": 79,
+      "reject_rate": 0.0247
+     },
+     "nominalization": {
+      "n_rejected": 15,
+      "n_passing": 66,
+      "reject_rate": 0.1852
+     },
+     "functionalization": {
+      "n_rejected": 12,
+      "n_passing": 69,
+      "reject_rate": 0.1481
+     },
+     "euphemism": {
+      "n_rejected": 25,
+      "n_passing": 56,
+      "reject_rate": 0.3086
+     },
+     "necessity": {
+      "n_rejected": 11,
+      "n_passing": 70,
+      "reject_rate": 0.1358
+     },
+     "aggregation": {
+      "n_rejected": 11,
+      "n_passing": 70,
+      "reject_rate": 0.1358
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "nominalization",
+     "functionalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 5
+   },
+   {
+    "floor": 0.12,
+    "overall_reject_rate": 0.2263,
+    "n_rejected_total": 110,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 3,
+      "n_passing": 78,
+      "reject_rate": 0.037
+     },
+     "nominalization": {
+      "n_rejected": 19,
+      "n_passing": 62,
+      "reject_rate": 0.2346
+     },
+     "functionalization": {
+      "n_rejected": 21,
+      "n_passing": 60,
+      "reject_rate": 0.2593
+     },
+     "euphemism": {
+      "n_rejected": 35,
+      "n_passing": 46,
+      "reject_rate": 0.4321
+     },
+     "necessity": {
+      "n_rejected": 16,
+      "n_passing": 65,
+      "reject_rate": 0.1975
+     },
+     "aggregation": {
+      "n_rejected": 16,
+      "n_passing": 65,
+      "reject_rate": 0.1975
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 5
+   },
+   {
+    "floor": 0.14,
+    "overall_reject_rate": 0.2449,
+    "n_rejected_total": 119,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 4,
+      "n_passing": 77,
+      "reject_rate": 0.0494
+     },
+     "nominalization": {
+      "n_rejected": 21,
+      "n_passing": 60,
+      "reject_rate": 0.2593
+     },
+     "functionalization": {
+      "n_rejected": 23,
+      "n_passing": 58,
+      "reject_rate": 0.284
+     },
+     "euphemism": {
+      "n_rejected": 35,
+      "n_passing": 46,
+      "reject_rate": 0.4321
+     },
+     "necessity": {
+      "n_rejected": 19,
+      "n_passing": 62,
+      "reject_rate": 0.2346
+     },
+     "aggregation": {
+      "n_rejected": 17,
+      "n_passing": 64,
+      "reject_rate": 0.2099
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.15,
+    "overall_reject_rate": 0.251,
+    "n_rejected_total": 122,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 4,
+      "n_passing": 77,
+      "reject_rate": 0.0494
+     },
+     "nominalization": {
+      "n_rejected": 23,
+      "n_passing": 58,
+      "reject_rate": 0.284
+     },
+     "functionalization": {
+      "n_rejected": 24,
+      "n_passing": 57,
+      "reject_rate": 0.2963
+     },
+     "euphemism": {
+      "n_rejected": 35,
+      "n_passing": 46,
+      "reject_rate": 0.4321
+     },
+     "necessity": {
+      "n_rejected": 19,
+      "n_passing": 62,
+      "reject_rate": 0.2346
+     },
+     "aggregation": {
+      "n_rejected": 17,
+      "n_passing": 64,
+      "reject_rate": 0.2099
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.16,
+    "overall_reject_rate": 0.251,
+    "n_rejected_total": 122,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 4,
+      "n_passing": 77,
+      "reject_rate": 0.0494
+     },
+     "nominalization": {
+      "n_rejected": 23,
+      "n_passing": 58,
+      "reject_rate": 0.284
+     },
+     "functionalization": {
+      "n_rejected": 24,
+      "n_passing": 57,
+      "reject_rate": 0.2963
+     },
+     "euphemism": {
+      "n_rejected": 35,
+      "n_passing": 46,
+      "reject_rate": 0.4321
+     },
+     "necessity": {
+      "n_rejected": 19,
+      "n_passing": 62,
+      "reject_rate": 0.2346
+     },
+     "aggregation": {
+      "n_rejected": 17,
+      "n_passing": 64,
+      "reject_rate": 0.2099
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.18,
+    "overall_reject_rate": 0.2737,
+    "n_rejected_total": 133,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 5,
+      "n_passing": 76,
+      "reject_rate": 0.0617
+     },
+     "nominalization": {
+      "n_rejected": 25,
+      "n_passing": 56,
+      "reject_rate": 0.3086
+     },
+     "functionalization": {
+      "n_rejected": 26,
+      "n_passing": 55,
+      "reject_rate": 0.321
+     },
+     "euphemism": {
+      "n_rejected": 39,
+      "n_passing": 42,
+      "reject_rate": 0.4815
+     },
+     "necessity": {
+      "n_rejected": 20,
+      "n_passing": 61,
+      "reject_rate": 0.2469
+     },
+     "aggregation": {
+      "n_rejected": 18,
+      "n_passing": 63,
+      "reject_rate": 0.2222
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.2,
+    "overall_reject_rate": 0.2984,
+    "n_rejected_total": 145,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 5,
+      "n_passing": 76,
+      "reject_rate": 0.0617
+     },
+     "nominalization": {
+      "n_rejected": 27,
+      "n_passing": 54,
+      "reject_rate": 0.3333
+     },
+     "functionalization": {
+      "n_rejected": 29,
+      "n_passing": 52,
+      "reject_rate": 0.358
+     },
+     "euphemism": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     },
+     "necessity": {
+      "n_rejected": 22,
+      "n_passing": 59,
+      "reject_rate": 0.2716
+     },
+     "aggregation": {
+      "n_rejected": 19,
+      "n_passing": 62,
+      "reject_rate": 0.2346
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.22,
+    "overall_reject_rate": 0.3477,
+    "n_rejected_total": 169,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 6,
+      "n_passing": 75,
+      "reject_rate": 0.0741
+     },
+     "nominalization": {
+      "n_rejected": 32,
+      "n_passing": 49,
+      "reject_rate": 0.3951
+     },
+     "functionalization": {
+      "n_rejected": 34,
+      "n_passing": 47,
+      "reject_rate": 0.4198
+     },
+     "euphemism": {
+      "n_rejected": 49,
+      "n_passing": 32,
+      "reject_rate": 0.6049
+     },
+     "necessity": {
+      "n_rejected": 24,
+      "n_passing": 57,
+      "reject_rate": 0.2963
+     },
+     "aggregation": {
+      "n_rejected": 24,
+      "n_passing": 57,
+      "reject_rate": 0.2963
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 5
+   },
+   {
+    "floor": 0.24,
+    "overall_reject_rate": 0.3765,
+    "n_rejected_total": 183,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 8,
+      "n_passing": 73,
+      "reject_rate": 0.0988
+     },
+     "nominalization": {
+      "n_rejected": 34,
+      "n_passing": 47,
+      "reject_rate": 0.4198
+     },
+     "functionalization": {
+      "n_rejected": 38,
+      "n_passing": 43,
+      "reject_rate": 0.4691
+     },
+     "euphemism": {
+      "n_rejected": 53,
+      "n_passing": 28,
+      "reject_rate": 0.6543
+     },
+     "necessity": {
+      "n_rejected": 25,
+      "n_passing": 56,
+      "reject_rate": 0.3086
+     },
+     "aggregation": {
+      "n_rejected": 25,
+      "n_passing": 56,
+      "reject_rate": 0.3086
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 5
+   },
+   {
+    "floor": 0.26,
+    "overall_reject_rate": 0.4115,
+    "n_rejected_total": 200,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 12,
+      "n_passing": 69,
+      "reject_rate": 0.1481
+     },
+     "nominalization": {
+      "n_rejected": 37,
+      "n_passing": 44,
+      "reject_rate": 0.4568
+     },
+     "functionalization": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     },
+     "euphemism": {
+      "n_rejected": 54,
+      "n_passing": 27,
+      "reject_rate": 0.6667
+     },
+     "necessity": {
+      "n_rejected": 27,
+      "n_passing": 54,
+      "reject_rate": 0.3333
+     },
+     "aggregation": {
+      "n_rejected": 27,
+      "n_passing": 54,
+      "reject_rate": 0.3333
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 5
+   },
+   {
+    "floor": 0.28,
+    "overall_reject_rate": 0.4239,
+    "n_rejected_total": 206,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 12,
+      "n_passing": 69,
+      "reject_rate": 0.1481
+     },
+     "nominalization": {
+      "n_rejected": 38,
+      "n_passing": 43,
+      "reject_rate": 0.4691
+     },
+     "functionalization": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     },
+     "euphemism": {
+      "n_rejected": 55,
+      "n_passing": 26,
+      "reject_rate": 0.679
+     },
+     "necessity": {
+      "n_rejected": 29,
+      "n_passing": 52,
+      "reject_rate": 0.358
+     },
+     "aggregation": {
+      "n_rejected": 29,
+      "n_passing": 52,
+      "reject_rate": 0.358
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 5
+   },
+   {
+    "floor": 0.3,
+    "overall_reject_rate": 0.4383,
+    "n_rejected_total": 213,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 12,
+      "n_passing": 69,
+      "reject_rate": 0.1481
+     },
+     "nominalization": {
+      "n_rejected": 39,
+      "n_passing": 42,
+      "reject_rate": 0.4815
+     },
+     "functionalization": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     },
+     "euphemism": {
+      "n_rejected": 57,
+      "n_passing": 24,
+      "reject_rate": 0.7037
+     },
+     "necessity": {
+      "n_rejected": 30,
+      "n_passing": 51,
+      "reject_rate": 0.3704
+     },
+     "aggregation": {
+      "n_rejected": 32,
+      "n_passing": 49,
+      "reject_rate": 0.3951
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "aggregation",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.32,
+    "overall_reject_rate": 0.4959,
+    "n_rejected_total": 241,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 14,
+      "n_passing": 67,
+      "reject_rate": 0.1728
+     },
+     "nominalization": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     },
+     "functionalization": {
+      "n_rejected": 48,
+      "n_passing": 33,
+      "reject_rate": 0.5926
+     },
+     "euphemism": {
+      "n_rejected": 62,
+      "n_passing": 19,
+      "reject_rate": 0.7654
+     },
+     "necessity": {
+      "n_rejected": 34,
+      "n_passing": 47,
+      "reject_rate": 0.4198
+     },
+     "aggregation": {
+      "n_rejected": 40,
+      "n_passing": 41,
+      "reject_rate": 0.4938
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "aggregation",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.34,
+    "overall_reject_rate": 0.5494,
+    "n_rejected_total": 267,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 16,
+      "n_passing": 65,
+      "reject_rate": 0.1975
+     },
+     "nominalization": {
+      "n_rejected": 51,
+      "n_passing": 30,
+      "reject_rate": 0.6296
+     },
+     "functionalization": {
+      "n_rejected": 51,
+      "n_passing": 30,
+      "reject_rate": 0.6296
+     },
+     "euphemism": {
+      "n_rejected": 68,
+      "n_passing": 13,
+      "reject_rate": 0.8395
+     },
+     "necessity": {
+      "n_rejected": 38,
+      "n_passing": 43,
+      "reject_rate": 0.4691
+     },
+     "aggregation": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "nominalization",
+     "functionalization",
+     "aggregation",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 5
+   },
+   {
+    "floor": 0.36,
+    "overall_reject_rate": 0.5514,
+    "n_rejected_total": 268,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 16,
+      "n_passing": 65,
+      "reject_rate": 0.1975
+     },
+     "nominalization": {
+      "n_rejected": 51,
+      "n_passing": 30,
+      "reject_rate": 0.6296
+     },
+     "functionalization": {
+      "n_rejected": 52,
+      "n_passing": 29,
+      "reject_rate": 0.642
+     },
+     "euphemism": {
+      "n_rejected": 68,
+      "n_passing": 13,
+      "reject_rate": 0.8395
+     },
+     "necessity": {
+      "n_rejected": 38,
+      "n_passing": 43,
+      "reject_rate": 0.4691
+     },
+     "aggregation": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "aggregation",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.38,
+    "overall_reject_rate": 0.5967,
+    "n_rejected_total": 290,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 20,
+      "n_passing": 61,
+      "reject_rate": 0.2469
+     },
+     "nominalization": {
+      "n_rejected": 54,
+      "n_passing": 27,
+      "reject_rate": 0.6667
+     },
+     "functionalization": {
+      "n_rejected": 55,
+      "n_passing": 26,
+      "reject_rate": 0.679
+     },
+     "euphemism": {
+      "n_rejected": 70,
+      "n_passing": 11,
+      "reject_rate": 0.8642
+     },
+     "necessity": {
+      "n_rejected": 42,
+      "n_passing": 39,
+      "reject_rate": 0.5185
+     },
+     "aggregation": {
+      "n_rejected": 49,
+      "n_passing": 32,
+      "reject_rate": 0.6049
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "aggregation",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   },
+   {
+    "floor": 0.4,
+    "overall_reject_rate": 0.6029,
+    "n_rejected_total": 293,
+    "per_operator": {
+     "agent_deletion": {
+      "n_rejected": 20,
+      "n_passing": 61,
+      "reject_rate": 0.2469
+     },
+     "nominalization": {
+      "n_rejected": 55,
+      "n_passing": 26,
+      "reject_rate": 0.679
+     },
+     "functionalization": {
+      "n_rejected": 56,
+      "n_passing": 25,
+      "reject_rate": 0.6914
+     },
+     "euphemism": {
+      "n_rejected": 70,
+      "n_passing": 11,
+      "reject_rate": 0.8642
+     },
+     "necessity": {
+      "n_rejected": 43,
+      "n_passing": 38,
+      "reject_rate": 0.5309
+     },
+     "aggregation": {
+      "n_rejected": 49,
+      "n_passing": 32,
+      "reject_rate": 0.6049
+     }
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "aggregation",
+     "necessity",
+     "agent_deletion"
+    ],
+    "n_distinct_rates": 6
+   }
+  ],
+  "ordering_stability": {
+   "ordering_at_default_floor": [
+    "euphemism",
+    "functionalization",
+    "nominalization",
+    "necessity",
+    "aggregation",
+    "agent_deletion"
+   ],
+   "n_nonzero_grid_points": 21,
+   "n_grid_points_with_identical_ordering": 10,
+   "floors_with_identical_ordering": [
+    0.12,
+    0.14,
+    0.15,
+    0.16,
+    0.18,
+    0.2,
+    0.22,
+    0.24,
+    0.26,
+    0.28
+   ],
+   "euphemism_is_most_rejected_at_all_nonzero_floors": true,
+   "agent_deletion_is_least_rejected_at_all_nonzero_floors": true,
+   "floors_where_euphemism_not_most_rejected": [],
+   "rank_range_by_operator": {
+    "agent_deletion": {
+     "min_rank": 6,
+     "max_rank": 6,
+     "pinned": true
+    },
+    "nominalization": {
+     "min_rank": 2,
+     "max_rank": 4,
+     "pinned": false
+    },
+    "functionalization": {
+     "min_rank": 2,
+     "max_rank": 3,
+     "pinned": false
+    },
+    "euphemism": {
+     "min_rank": 1,
+     "max_rank": 1,
+     "pinned": true
+    },
+    "necessity": {
+     "min_rank": 4,
+     "max_rank": 5,
+     "pinned": false
+    },
+    "aggregation": {
+     "min_rank": 3,
+     "max_rank": 5,
+     "pinned": false
+    }
+   },
+   "n_grid_points_with_tied_rates": 11
+  },
+  "embedding_cross_reference": {
+   "source": "environment/semantic_similarity_report.json",
+   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+   "per_operator": {
+    "agent_deletion": {
+     "pearson_r_overlap_vs_cosine": 0.7135,
+     "mean_cosine": 0.7959,
+     "n_passing_pairs_below_rejected_groups_mean_cosine": 1,
+     "n_rejected_pairs_above_passing_groups_mean_cosine": 0,
+     "total_disagreeing_pairs": 1,
+     "sweep_rank_min": 6,
+     "sweep_rank_max": 6,
+     "sweep_rank_span": 0,
+     "sweep_rank_pinned": true
+    },
+    "nominalization": {
+     "pearson_r_overlap_vs_cosine": 0.6441,
+     "mean_cosine": 0.6537,
+     "n_passing_pairs_below_rejected_groups_mean_cosine": 6,
+     "n_rejected_pairs_above_passing_groups_mean_cosine": 2,
+     "total_disagreeing_pairs": 8,
+     "sweep_rank_min": 2,
+     "sweep_rank_max": 4,
+     "sweep_rank_span": 2,
+     "sweep_rank_pinned": false
+    },
+    "functionalization": {
+     "pearson_r_overlap_vs_cosine": 0.5966,
+     "mean_cosine": 0.6111,
+     "n_passing_pairs_below_rejected_groups_mean_cosine": 11,
+     "n_rejected_pairs_above_passing_groups_mean_cosine": 5,
+     "total_disagreeing_pairs": 16,
+     "sweep_rank_min": 2,
+     "sweep_rank_max": 3,
+     "sweep_rank_span": 1,
+     "sweep_rank_pinned": false
+    },
+    "euphemism": {
+     "pearson_r_overlap_vs_cosine": 0.6128,
+     "mean_cosine": 0.5543,
+     "n_passing_pairs_below_rejected_groups_mean_cosine": 2,
+     "n_rejected_pairs_above_passing_groups_mean_cosine": 4,
+     "total_disagreeing_pairs": 6,
+     "sweep_rank_min": 1,
+     "sweep_rank_max": 1,
+     "sweep_rank_span": 0,
+     "sweep_rank_pinned": true
+    },
+    "necessity": {
+     "pearson_r_overlap_vs_cosine": 0.7116,
+     "mean_cosine": 0.6601,
+     "n_passing_pairs_below_rejected_groups_mean_cosine": 1,
+     "n_rejected_pairs_above_passing_groups_mean_cosine": 2,
+     "total_disagreeing_pairs": 3,
+     "sweep_rank_min": 4,
+     "sweep_rank_max": 5,
+     "sweep_rank_span": 1,
+     "sweep_rank_pinned": false
+    },
+    "aggregation": {
+     "pearson_r_overlap_vs_cosine": 0.6723,
+     "mean_cosine": 0.6638,
+     "n_passing_pairs_below_rejected_groups_mean_cosine": 4,
+     "n_rejected_pairs_above_passing_groups_mean_cosine": 2,
+     "total_disagreeing_pairs": 6,
+     "sweep_rank_min": 3,
+     "sweep_rank_max": 5,
+     "sweep_rank_span": 2,
+     "sweep_rank_pinned": false
+    }
+   },
+   "operators_by_embedding_disagreement_desc": [
+    "functionalization",
+    "nominalization",
+    "euphemism",
+    "aggregation",
+    "necessity",
+    "agent_deletion"
+   ],
+   "lowest_overlap_vs_cosine_correlation": "functionalization",
+   "operators_with_unstable_sweep_rank": [
+    "aggregation",
+    "functionalization",
+    "necessity",
+    "nominalization"
+   ],
+   "top2_disagreeing_are_functionalization_and_nominalization": true,
+   "both_top2_disagreeing_operators_have_unstable_sweep_rank": true,
+   "interpretation": "The floor sweep and the embedding check are independent methods and they converge on the same two operators: functionalization and nominalization are both the most overlap-vs-cosine disagreeing and the most rank-unstable under the sweep, and functionalization is the clearest case on every measure (lowest correlation, most disagreeing pairs, unstable rank). agent_deletion is the clean opposite: highest correlation, one disagreeing pair, rank pinned. The relationship is directional, NOT monotone -- euphemism has as many disagreeing pairs as aggregation and is still rank-pinned, because its overlap distribution sits far enough below the others that no floor in this range reorders it. So the conclusion is narrow and stated as such: OVERLAP_FLOOR is weakest for the mid-pack paraphrase operators, and that weakness does not reach the headline operator."
+  },
+  "euphemism_survival": {
+   "n_passing_by_floor": {
+    "0.0": 81,
+    "0.02": 59,
+    "0.04": 59,
+    "0.06": 59,
+    "0.08": 58,
+    "0.1": 56,
+    "0.12": 46,
+    "0.14": 46,
+    "0.15": 46,
+    "0.16": 46,
+    "0.18": 42,
+    "0.2": 38,
+    "0.22": 32,
+    "0.24": 28,
+    "0.26": 27,
+    "0.28": 26,
+    "0.3": 24,
+    "0.32": 19,
+    "0.34": 13,
+    "0.36": 13,
+    "0.38": 11,
+    "0.4": 11
+   },
+   "n_passing_at_default_floor": 46,
+   "highest_floor_keeping_majority_of_bank": 0.18,
+   "highest_floor_keeping_at_least_30_pairs": 0.22
+  }
+ },
+ "C_gate_x_floor_independence": {
+  "grid": [
+   {
+    "gate": 2.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0519,
+     "nominalization": 0.2803,
+     "functionalization": 0.2968,
+     "euphemism": 0.4314,
+     "necessity": 0.2368,
+     "aggregation": 0.2215
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 2.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0519,
+     "nominalization": 0.2803,
+     "functionalization": 0.2968,
+     "euphemism": 0.4314,
+     "necessity": 0.2368,
+     "aggregation": 0.2215
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 3.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0511,
+     "nominalization": 0.2815,
+     "functionalization": 0.2966,
+     "euphemism": 0.4316,
+     "necessity": 0.2361,
+     "aggregation": 0.2174
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 3.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0511,
+     "nominalization": 0.2815,
+     "functionalization": 0.2966,
+     "euphemism": 0.4316,
+     "necessity": 0.2361,
+     "aggregation": 0.2174
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 4.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0511,
+     "nominalization": 0.2815,
+     "functionalization": 0.2966,
+     "euphemism": 0.4316,
+     "necessity": 0.2361,
+     "aggregation": 0.2174
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 4.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0511,
+     "nominalization": 0.2815,
+     "functionalization": 0.2966,
+     "euphemism": 0.4316,
+     "necessity": 0.2361,
+     "aggregation": 0.2174
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 5.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0511,
+     "nominalization": 0.2815,
+     "functionalization": 0.2966,
+     "euphemism": 0.4316,
+     "necessity": 0.2361,
+     "aggregation": 0.2174
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 5.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0506,
+     "nominalization": 0.2821,
+     "functionalization": 0.2965,
+     "euphemism": 0.4317,
+     "necessity": 0.2357,
+     "aggregation": 0.2154
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 6.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0506,
+     "nominalization": 0.2821,
+     "functionalization": 0.2965,
+     "euphemism": 0.4317,
+     "necessity": 0.2357,
+     "aggregation": 0.2154
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 6.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0505,
+     "nominalization": 0.2832,
+     "functionalization": 0.2947,
+     "euphemism": 0.4329,
+     "necessity": 0.236,
+     "aggregation": 0.2148
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 7.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0505,
+     "nominalization": 0.2832,
+     "functionalization": 0.2947,
+     "euphemism": 0.4329,
+     "necessity": 0.236,
+     "aggregation": 0.2148
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 7.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0505,
+     "nominalization": 0.2832,
+     "functionalization": 0.2947,
+     "euphemism": 0.4329,
+     "necessity": 0.236,
+     "aggregation": 0.2148
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   },
+   {
+    "gate": 8.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "reject_rate_by_operator_over_reachable_cells": {
+     "agent_deletion": 0.0505,
+     "nominalization": 0.2832,
+     "functionalization": 0.2947,
+     "euphemism": 0.4329,
+     "necessity": 0.236,
+     "aggregation": 0.2148
+    },
+    "ordering_most_to_least_rejected": [
+     "euphemism",
+     "functionalization",
+     "nominalization",
+     "necessity",
+     "aggregation",
+     "agent_deletion"
+    ]
+   }
+  ],
+  "n_distinct_orderings_across_gates": 1,
+  "ordering_is_invariant_to_gate": true,
+  "judge_free_pair_ordering_at_default_floor": [
+   "euphemism",
+   "functionalization",
+   "nominalization",
+   "necessity",
+   "aggregation",
+   "agent_deletion"
+  ],
+  "coverage_weighted_ordering_matches_judge_free_ordering": true,
+  "note": "overlap() never sees a judge, so independence is structural; the only coupling possible is through differing per-judge act coverage, and this measures whether that residual is enough to reorder the operators."
+ },
+ "D_gate_also_defines_threshold_flip": {
+  "grid": [
+   {
+    "gate": 2.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b"
+    ],
+    "overall_flip_rate": 0.214,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 146,
+      "flip_rate": 0.1027
+     },
+     "nominalization": {
+      "n": 113,
+      "flip_rate": 0.2389
+     },
+     "functionalization": {
+      "n": 109,
+      "flip_rate": 0.1927
+     },
+     "euphemism": {
+      "n": 87,
+      "flip_rate": 0.4368
+     },
+     "necessity": {
+      "n": 116,
+      "flip_rate": 0.2069
+     },
+     "aggregation": {
+      "n": 116,
+      "flip_rate": 0.1897
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 2.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b"
+    ],
+    "overall_flip_rate": 0.214,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 146,
+      "flip_rate": 0.1027
+     },
+     "nominalization": {
+      "n": 113,
+      "flip_rate": 0.2389
+     },
+     "functionalization": {
+      "n": 109,
+      "flip_rate": 0.1927
+     },
+     "euphemism": {
+      "n": 87,
+      "flip_rate": 0.4368
+     },
+     "necessity": {
+      "n": 116,
+      "flip_rate": 0.2069
+     },
+     "aggregation": {
+      "n": 116,
+      "flip_rate": 0.1897
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 3.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.1798,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 223,
+      "flip_rate": 0.0852
+     },
+     "nominalization": {
+      "n": 171,
+      "flip_rate": 0.2047
+     },
+     "functionalization": {
+      "n": 166,
+      "flip_rate": 0.1867
+     },
+     "euphemism": {
+      "n": 133,
+      "flip_rate": 0.3459
+     },
+     "necessity": {
+      "n": 178,
+      "flip_rate": 0.1742
+     },
+     "aggregation": {
+      "n": 180,
+      "flip_rate": 0.15
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 3.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.1798,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 223,
+      "flip_rate": 0.0852
+     },
+     "nominalization": {
+      "n": 171,
+      "flip_rate": 0.2047
+     },
+     "functionalization": {
+      "n": 166,
+      "flip_rate": 0.1867
+     },
+     "euphemism": {
+      "n": 133,
+      "flip_rate": 0.3459
+     },
+     "necessity": {
+      "n": 178,
+      "flip_rate": 0.1742
+     },
+     "aggregation": {
+      "n": 180,
+      "flip_rate": 0.15
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 4.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.1294,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 223,
+      "flip_rate": 0.0583
+     },
+     "nominalization": {
+      "n": 171,
+      "flip_rate": 0.193
+     },
+     "functionalization": {
+      "n": 166,
+      "flip_rate": 0.1506
+     },
+     "euphemism": {
+      "n": 133,
+      "flip_rate": 0.2331
+     },
+     "necessity": {
+      "n": 178,
+      "flip_rate": 0.1292
+     },
+     "aggregation": {
+      "n": 180,
+      "flip_rate": 0.0611
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 4.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.1294,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 223,
+      "flip_rate": 0.0583
+     },
+     "nominalization": {
+      "n": 171,
+      "flip_rate": 0.193
+     },
+     "functionalization": {
+      "n": 166,
+      "flip_rate": 0.1506
+     },
+     "euphemism": {
+      "n": 133,
+      "flip_rate": 0.2331
+     },
+     "necessity": {
+      "n": 178,
+      "flip_rate": 0.1292
+     },
+     "aggregation": {
+      "n": 180,
+      "flip_rate": 0.0611
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 5.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.1123,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 223,
+      "flip_rate": 0.0448
+     },
+     "nominalization": {
+      "n": 171,
+      "flip_rate": 0.1579
+     },
+     "functionalization": {
+      "n": 166,
+      "flip_rate": 0.1506
+     },
+     "euphemism": {
+      "n": 133,
+      "flip_rate": 0.1955
+     },
+     "necessity": {
+      "n": 178,
+      "flip_rate": 0.1011
+     },
+     "aggregation": {
+      "n": 180,
+      "flip_rate": 0.0667
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 5.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.118,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 300,
+      "flip_rate": 0.0633
+     },
+     "nominalization": {
+      "n": 229,
+      "flip_rate": 0.1528
+     },
+     "functionalization": {
+      "n": 223,
+      "flip_rate": 0.139
+     },
+     "euphemism": {
+      "n": 179,
+      "flip_rate": 0.1788
+     },
+     "necessity": {
+      "n": 240,
+      "flip_rate": 0.0958
+     },
+     "aggregation": {
+      "n": 244,
+      "flip_rate": 0.1107
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 6.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.0996,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 300,
+      "flip_rate": 0.05
+     },
+     "nominalization": {
+      "n": 229,
+      "flip_rate": 0.1397
+     },
+     "functionalization": {
+      "n": 223,
+      "flip_rate": 0.1031
+     },
+     "euphemism": {
+      "n": 179,
+      "flip_rate": 0.1564
+     },
+     "necessity": {
+      "n": 240,
+      "flip_rate": 0.0917
+     },
+     "aggregation": {
+      "n": 244,
+      "flip_rate": 0.0861
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 6.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.1065,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 376,
+      "flip_rate": 0.0585
+     },
+     "nominalization": {
+      "n": 286,
+      "flip_rate": 0.1469
+     },
+     "functionalization": {
+      "n": 280,
+      "flip_rate": 0.1107
+     },
+     "euphemism": {
+      "n": 224,
+      "flip_rate": 0.1607
+     },
+     "necessity": {
+      "n": 301,
+      "flip_rate": 0.0997
+     },
+     "aggregation": {
+      "n": 307,
+      "flip_rate": 0.0912
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 7.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.031,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 376,
+      "flip_rate": 0.008
+     },
+     "nominalization": {
+      "n": 286,
+      "flip_rate": 0.0594
+     },
+     "functionalization": {
+      "n": 280,
+      "flip_rate": 0.0286
+     },
+     "euphemism": {
+      "n": 224,
+      "flip_rate": 0.0625
+     },
+     "necessity": {
+      "n": 301,
+      "flip_rate": 0.0266
+     },
+     "aggregation": {
+      "n": 307,
+      "flip_rate": 0.0163
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 7.5,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.031,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 376,
+      "flip_rate": 0.008
+     },
+     "nominalization": {
+      "n": 286,
+      "flip_rate": 0.0594
+     },
+     "functionalization": {
+      "n": 280,
+      "flip_rate": 0.0286
+     },
+     "euphemism": {
+      "n": 224,
+      "flip_rate": 0.0625
+     },
+     "necessity": {
+      "n": 301,
+      "flip_rate": 0.0266
+     },
+     "aggregation": {
+      "n": 307,
+      "flip_rate": 0.0163
+     }
+    },
+    "rank1_operator": "euphemism"
+   },
+   {
+    "gate": 8.0,
+    "judges_valid": [
+     "gemma4-12b",
+     "gemma4-e4b",
+     "granite-guard",
+     "granite41-8b",
+     "olmo3-7b"
+    ],
+    "overall_flip_rate": 0.0135,
+    "per_operator": {
+     "agent_deletion": {
+      "n": 376,
+      "flip_rate": 0.0027
+     },
+     "nominalization": {
+      "n": 286,
+      "flip_rate": 0.028
+     },
+     "functionalization": {
+      "n": 280,
+      "flip_rate": 0.025
+     },
+     "euphemism": {
+      "n": 224,
+      "flip_rate": 0.0223
+     },
+     "necessity": {
+      "n": 301,
+      "flip_rate": 0.0033
+     },
+     "aggregation": {
+      "n": 307,
+      "flip_rate": 0.0065
+     }
+    },
+    "rank1_operator": "nominalization"
+   }
+  ],
+  "sensitivity": {
+   "overall_flip_rate_at_default_gate": 0.1294,
+   "flip_rate_min_within_membership_plateau": 0.1123,
+   "flip_rate_max_within_membership_plateau": 0.1798,
+   "relative_spread_within_membership_plateau": 0.3754,
+   "flip_rate_is_flat_within_membership_plateau": false,
+   "rank1_operator_by_flip_rate_across_sweep": [
+    "euphemism",
+    "nominalization"
+   ],
+   "rank1_by_flip_rate_is_invariant": false,
+   "caveat": "this is the full-bank census flip rate over every pair the admitted judges cover and the floor passes; it is NOT the campaign's sampled flip rate and the two should not be quoted interchangeably"
+  },
+  "note": "threshold_flip in ReplayJudge.score reuses GATE as its cutoff, so this row moves whenever the instrument-validity gate moves. Reported so the coupling is visible."
+ }
+}
