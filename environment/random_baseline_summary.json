@@ -41,6 +41,29 @@
         "gap": 0.447
       }
     },
+    "null_model_by_judge": {
+      "gemma4-12b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.509,
+        "gap_mean": 0.184,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      },
+      "olmo3-7b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.433,
+        "gap_mean": 0.155,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      },
+      "gemma4-e4b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.506,
+        "gap_mean": 0.185,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      }
+    },
     "cells": {
       "gemma4-12b|agent_deletion": {
         "n": 114,
@@ -178,6 +201,29 @@
         "gap": 0.596
       }
     },
+    "null_model_by_judge": {
+      "gemma4-12b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.516,
+        "gap_mean": 0.181,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      },
+      "olmo3-7b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.474,
+        "gap_mean": 0.178,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      },
+      "gemma4-e4b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.506,
+        "gap_mean": 0.186,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      }
+    },
     "cells": {
       "gemma4-12b|agent_deletion": {
         "n": 113,
@@ -313,6 +359,29 @@
         "rank1": "euphemism",
         "rank2": "functionalization",
         "gap": 0.06
+      }
+    },
+    "null_model_by_judge": {
+      "gemma4-12b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.456,
+        "gap_mean": 0.174,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      },
+      "olmo3-7b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.44,
+        "gap_mean": 0.164,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
+      },
+      "gemma4-e4b": {
+        "baseline": "null_model",
+        "n_shuffle": 1000,
+        "gap_p95": 0.394,
+        "gap_mean": 0.145,
+        "note": "an observed gap must exceed gap_p95 to beat chance"
       }
     },
     "cells": {

@@ -6,27 +6,32 @@ have: an environment an agent enters, acts in, and gets feedback from, where its
 action changes what it observes next. The preliminary round asked for the spec.
 The semi-final asks for this.
 
-DESIGN DECISION THAT MATTERS: the environment runs in REPLAY mode by default,
+DESIGN DECISION THAT MATTERS: the environment runs in REPLAY mode only,
 against the frozen judged data already in the repo. That means the whole loop is
 runnable offline, with no API key, no network, and no cost, and it produces the
-same trajectory from the same seed. A live mode exists for probing cells the
-frozen data does not cover. Replay is not a toy stand-in -- every score it
-returns is a real recorded judgment from a real model, so a reviewer checking
-the loop is checking real behaviour, just not fresh behaviour.
+same trajectory from the same seed. Replay is not a toy stand-in -- every score
+it returns is a real recorded judgment from a real model, so a reviewer checking
+the loop is checking real behaviour, just not fresh behaviour. There is NO live
+mode: probing a cell the frozen data does not cover is not possible today, and
+adding one is listed as open work in the README rather than claimed here.
 
 The state/action/feedback split is exactly the one in the submission:
 
   FIXED       the act bank, the judge panel, the validity gate, the semantic
-              floor, lineage separation, the lexicon constraint
+              floor, lineage separation
   EXPLORABLE  which operator, composed with what, in which domain, against
               which judge, at what sample size
-  FEEDBACK    per-act delta, binary verdict flip (judge-provided; currently
-              None for every probe of every operator due to a known wiring
-              bug -- see ReplayJudge.score), threshold flip (derived from
-              literal_score/rewritten_score crossing the same 4.0/10 gate used
-              for instrument validity; works for every operator today),
-              rank-1 to rank-2 gap with interval, validator verdict, the
-              judge's own reasoning, budget left
+  FEEDBACK    per-act delta, threshold flip (derived from literal_score/
+              rewritten_score crossing the same 4.0/10 gate used for instrument
+              validity; works for every operator), rank-1 to rank-2 gap with
+              interval, validator verdict, budget left
+
+Two things a reader might expect in FEEDBACK and will not find, both because the
+frozen data does not carry them, not because the loop drops them: the judge's
+binary verdict on a rewrite (always None -- see ReplayJudge.score for the wiring
+bug) and the judge's own reasoning text (never recorded for any operator). A
+lexicon constraint is likewise NOT in FIXED: the rewrites in this repository
+were generated without one, as the top-level README states.
 
 Every step is appended to an immutable JSONL log with the schema the document
 names. Rejections are logged with their reason rather than dropped, because the

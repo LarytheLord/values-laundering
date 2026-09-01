@@ -55,6 +55,12 @@ def run_seed(seed):
                 cells[f"{jk}|{m}"] = {"n": len(v), "mean_delta": round(st.mean(v), 3),
                                        "stdev": round(st.pstdev(v), 3) if len(v) > 1 else 0.0}
 
+    null_by_judge = {}
+    for jk in env.valid:
+        nb = env.baseline_null_model(jk)
+        if "gap_p95" in nb:
+            null_by_judge[jk] = nb
+
     summary = {
         "seed": seed,
         "policy": "random_agent",
@@ -70,6 +76,13 @@ def run_seed(seed):
         "judges_excluded": o["judges_excluded"],
         "best_move_so_far": o["best_move_so_far"],
         "final_gap_by_judge": {jk: env._gap(jk) for jk in o["judges_valid"]},
+        # Same null model run_campaign.py applies to the greedy policy, on the
+        # same code path. Running it here is the whole point of the comparison:
+        # the shuffle conditions on the REALIZED per-operator sample sizes, so a
+        # policy that concentrates its budget on one operator raises its own
+        # significance bar. Without this the two policies cannot be compared on
+        # anything except raw gap, which is the comparison that misleads.
+        "null_model_by_judge": null_by_judge,
         "cells": cells,
         "log_path": log_path,
         "log_lines": sum(1 for _ in open(log_path)),
