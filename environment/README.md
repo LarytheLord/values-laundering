@@ -164,6 +164,7 @@ real model, just not a fresh one.
 ```bash
 python3 env.py --selftest              # one seed, budget=300, ~84 steps, prints a trace
 python3 run_campaign.py                # 3 seeds, budget=2000 each, writes campaign_summary.json
+python3 run_budget_sweep.py            # both policies at budgets 150/300/600, writes budget_sweep_summary.json
 ```
 
 Both are pure Python standard library. `env.py` finds `data/recency_results.json` and
@@ -223,8 +224,71 @@ policy's actual exploration value is the cells where it *diverges* from that obv
 and finds a genuinely different, judge-specific leader instead — which is exactly what the
 round-robin fix above made visible in the first place, not a weaker result than random search.
 One counter-example, stated plainly rather than hidden: seed 42/`olmo3-7b`, random's gap was
-smaller than greedy's. No null-model significance check has been run against the random
-numbers yet.
+smaller than greedy's.
+
+The null model has since been run against the random numbers too, on the same code path
+(`Environment.baseline_null_model`, in `random_baseline_summary.json`'s `null_model_by_judge`).
+At budget=2000 the random baseline clears its own p95 in **6 of 9** (judge, seed) cells while
+greedy clears in **0 of 9**. The next section is the budget sweep that tests whether that is a
+fact about the policy or a fact about the budget.
+
+## Budget sweep: does the directed policy earn its keep when probes are scarce?
+
+The space is 81 acts x 6 operators x 3 instrument-valid judges = 1458 probe cells, and the
+official campaign budget is 2000, so at the official budget the budget does not bind.
+`run_budget_sweep.py` runs both policies at three budgets that do bind — 150, 300, 600 — over
+the same 3 seeds (0, 1, 42) and the same judge panel, recording the same per-cell n /
+`final_gap_by_judge` / `null_model_by_judge` fields the two official runners record. The
+budget=2000 row is read back from the committed `campaign_summary.json` and
+`random_baseline_summary.json` rather than re-run. Output: `budget_sweep_summary.json` and
+per-step logs under `sweep_logs/`. Nothing in the official summaries or logs is written to.
+
+Read from `budget_sweep_summary.json`'s `comparison_table` (`clears` = (judge, seed) cells out
+of 9 whose observed rank1-vs-rank2 gap exceeds that run's own null-model p95; `max n`, `min n`
+= mean across the 9 cells of the largest and smallest of the six per-operator sample sizes;
+`skew` = median of max n / min n; `no-cover` = cells in which at least one of the six operators
+was never probed):
+
+| policy | budget | clears | mean gap | mean null p95 | max n | min n | skew | no-cover |
+|---|---|---|---|---|---|---|---|---|
+| greedy | 150  | 0/9 | 0.662 | 2.247 | 11.0  | 3.7  | 2.75 | 0 |
+| random | 150  | 0/9 | 0.939 | 1.861 | 12.4  | 0.4  | n/a  | 8 |
+| greedy | 300  | 0/9 | 0.610 | 2.126 | 34.7  | 4.1  | 9.50 | 0 |
+| random | 300  | 1/9 | 0.950 | 1.475 | 21.7  | 4.7  | n/a  | 1 |
+| greedy | 600  | 0/9 | 0.577 | 2.206 | 100.4 | 4.1  | 29.0 | 0 |
+| random | 600  | 1/9 | 0.535 | 1.014 | 42.1  | 11.8 | 3.83 | 0 |
+| greedy | 2000 | 0/9 | 0.597 | 2.120 | 360.2 | 4.1  | 84.2 | 0 |
+| random | 2000 | 6/9 | 0.720 | 0.470 | 115.7 | 53.9 | 2.15 | 0 |
+
+`skew` is `n/a` for the two random rows where some cell left an operator unprobed, which makes
+max n / min n undefined; the `no-cover` column carries that fact instead.
+
+The result: **greedy clears 0 of 9 at every budget tested, from 150 to 2000.** It does not
+overtake random at any of them. Random clears 0/9, 1/9, 1/9, 6/9 as the budget rises.
+
+The mechanism is in the last four columns. Greedy's null-model p95 is flat across a 13x range
+of budget (2.247, 2.126, 2.206, 2.120) because the quantity that sets it — the smallest
+per-operator sample size — never moves: mean min n is 3.7, 4.1, 4.1, 4.1 while mean max n
+goes 11.0 -> 34.7 -> 100.4 -> 360.2. Every additional probe goes to the operator that already
+leads, so the shuffle keeps being dominated by the four-observation cells and the significance
+bar stays where it was. Random's p95 falls monotonically (1.861 -> 1.475 -> 1.014 -> 0.470)
+because its min n rises with budget (0.4 -> 4.7 -> 11.8 -> 53.9). Extra budget buys random
+statistical power and buys greedy none. Observed gap does not separate the two policies at any
+budget (greedy 0.577-0.662, random 0.535-0.950); the separation is entirely in the threshold.
+
+One thing the directed policy does buy, at the budget where it matters: coverage. Its breadth
+pass probes all 18 (judge, operator) cells before any depth spending, so it never leaves an
+operator unmeasured at any budget. At budget=150 random leaves at least one of the six
+operators unprobed in 8 of the 9 (judge, seed) cells, and at budget=300 in 1 of 9. That is a
+real difference in what the run can say afterwards, but it does not show up as significance.
+
+What this implies about the policy design, stated as the finding rather than argued for:
+greedy's depth phase is pure exploitation with no re-widening, so under the environment's own
+null model — which conditions on realized allocation — the policy's spending pattern raises its
+own significance bar faster than its extra samples lower it, and does so at every budget tested.
+A policy that beats this null needs to hold a floor under the non-leading operators (or the
+null needs to score something other than the top-vs-second gap). Neither change has been made
+or tested here.
 
 ## Run it, one-click entry points
 
@@ -242,13 +306,18 @@ readable pass/fail instead of a raw traceback if something's missing.
 env.py                              the environment: Bank, ReplayJudge, Environment, greedy_agent, random_agent, selftest
 run_campaign.py                     the non-toy run: budget=2000, seeds 0/1/42, writes campaign_summary.json
 run_random_baseline.py              the random-exploration baseline described above
+run_budget_sweep.py                 both policies at binding budgets 150/300/600, 3 seeds; cites the committed
+                                     budget=2000 numbers rather than re-running them
 run_config.json                     standalone config artifact for the official runs above (budget, seeds, gate,
                                      overlap floor, threshold-flip definition, judge model versions, data-file sha256s)
 campaign_summary.json               per-seed summary: cells probed, gaps, rejection rate, null-model baseline
 random_baseline_summary.json        same, for the random-exploration baseline
+budget_sweep_summary.json           per-(policy, budget, seed) summary plus the collapsed comparison table above
 exploration_log.jsonl               the 84-record selftest trace (seed=0, budget=300)
 exploration_log_campaign_seed*.jsonl   the full immutable per-step log for each campaign seed
 exploration_log_random_seed*.jsonl     the full immutable per-step log for each random-baseline seed
+sweep_logs/exploration_log_sweep_*.jsonl   the same per-step log for each budget-sweep run, kept in its own
+                                     directory so no sweep output can collide with the official logs above
 scripts/smoke_test.sh, reproduce_core.sh   one-click entry points wrapping the commands above
 figures/fig_env_loop.png            the fixed/explorable/feedback loop diagram, plus make_loop_figure.py that builds it
 figures/fig_campaign_gaps.png       observed gap vs. null-model p95 per seed/judge, plus make_gap_figure.py that builds it
