@@ -252,6 +252,10 @@ exploration_log_random_seed*.jsonl     the full immutable per-step log for each 
 scripts/smoke_test.sh, reproduce_core.sh   one-click entry points wrapping the commands above
 figures/fig_env_loop.png            the fixed/explorable/feedback loop diagram, plus make_loop_figure.py that builds it
 figures/fig_campaign_gaps.png       observed gap vs. null-model p95 per seed/judge, plus make_gap_figure.py that builds it
+check_semantic_similarity.py        independent embedding-based cross-check of the overlap floor (see above); does not
+                                     gate anything, descriptive statistics only
+semantic_similarity_report.json     output of check_semantic_similarity.py -- per-operator and overall cosine-similarity
+                                     stats, worked examples, over all 486 (act, rewrite) pairs
 ```
 
 Every step, in either mode, is appended to its log file as one immutable JSON record.
