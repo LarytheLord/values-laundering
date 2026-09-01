@@ -256,7 +256,14 @@ check_semantic_similarity.py        independent embedding-based cross-check of t
                                      gate anything, descriptive statistics only
 semantic_similarity_report.json     output of check_semantic_similarity.py -- per-operator and overall cosine-similarity
                                      stats, worked examples, over all 486 (act, rewrite) pairs
+tests/test_env.py                   pytest regression suite: the validity gate, the overlap floor, greedy_agent's
+                                     depth-phase round robin, threshold_flip, and random_agent's RNG discipline --
+                                     each test targets a specific bug this environment actually had at some point
+tests/README.md                     what each test class defends against and why
 ```
+
+Run the tests with `pytest environment/tests/test_env.py -v` (26 tests, all passing against a synthetic
+fixture bank, not the real act data, so they stay fast and don't depend on the competition data file's contents).
 
 Every step, in either mode, is appended to its log file as one immutable JSON record.
 Rejected probes (content drift below the overlap floor) are logged with their rejection
