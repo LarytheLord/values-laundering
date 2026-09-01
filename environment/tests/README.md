@@ -27,14 +27,14 @@ second.
 - **TestOverlapFloor** -- the semantic-preservation floor (`OVERLAP_FLOOR`)
   accepting a rewrite that drifted too far from its source act, or
   rejecting one that didn't, including the exact boundary ratio.
-- **TestGreedyAgentDepthPhaseRoundRobin** -- regression test for the
-  exploitation bug found and fixed this session, where the depth phase
-  always deepened `judges_valid[0]` and never rotated to the other valid
-  judges. Asserts an even 4/4/4 split across three judges instead of one
-  judge absorbing every depth round.
-- **TestBinaryVerdictPairMissingBinField** -- regression test for the dead
-  `binary_verdict_pair` field discovered this session: no per-operator
-  `moves` entry in the real data carries a `bin` key, so the second element
+- **TestGreedyAgentDepthPhaseRoundRobin** -- regression test for a real
+  exploitation bug this codebase had, where the depth phase always deepened
+  `judges_valid[0]` and never rotated to the other valid judges. Asserts an
+  even 4/4/4 split across three judges instead of one judge absorbing every
+  depth round.
+- **TestBinaryVerdictPairMissingBinField** -- regression test for a real dead
+  field this codebase had: no per-operator `moves` entry in the real data
+  carries a `bin` key, so the second element
   must come back explicitly `None`, never a default like `False` or `0`
   that would misrepresent an absent judge verdict as a real one.
 - **TestThresholdFlip** -- the newer `threshold_flip` field must fail closed

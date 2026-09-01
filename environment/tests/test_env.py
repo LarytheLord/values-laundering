@@ -4,7 +4,7 @@ Why this file exists at all: env.py had only an integration-style
 `--selftest` smoke check before this file, which proves the loop runs but
 would not catch a wrong constant, an inverted comparison, or a field that is
 silently always None. Every test class below is aimed at one of four bug
-classes that this exact codebase actually produced this session:
+classes that this exact codebase actually produced:
   (1) the validity gate's boundary/exclusion logic,
   (2) greedy_agent's depth phase locking onto one judge instead of round-robin,
   (3) a judge-provided field (binary_verdict_pair) that is silently always
@@ -307,9 +307,9 @@ class TestGreedyAgentDepthPhaseRoundRobin:
 # ------------------------------------------------ binary_verdict_pair wiring bug
 
 class TestBinaryVerdictPairMissingBinField:
-    """Regression test for the dead binary_verdict_pair field discovered late
-    this session: no per-operator 'moves' entry in the real data ever has a
-    'bin' key, so the second element of binary_pair was silently always
+    """Regression test for the dead binary_verdict_pair field: no per-operator
+    'moves' entry in the real data ever has a 'bin' key, so the second
+    element of binary_pair was silently always
     None. This must stay explicitly None (a known gap), never coerce to a
     falsy-looking default like False or 0 that would misrepresent an absent
     judge verdict as a real one."""
