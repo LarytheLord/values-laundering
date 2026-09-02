@@ -203,6 +203,30 @@ Point it anywhere OpenAI-compatible (vLLM, Together, DashScope, ModelScope, Open
 tier, because that is the one provider where a live score can be compared against a frozen
 score from the *same* model id — see the agreement check below.
 
+A model id may also carry an `@provider` suffix, which routes that one model to a registered
+endpoint without disturbing anything else:
+
+```bash
+python3 env.py --live --live-model deepseek-ai/DeepSeek-V3.2-Exp@hf
+```
+
+The registry is `LIVE_PROVIDERS` in `env.py`; `python3 env.py --live --help` lists the names.
+Each entry is a base URL plus the environment variables that route is allowed to read a key
+from — never a key, and never a default one. That per-provider variable list is the property
+that makes a mixed-provider run safe: a route with no credential of its own **fails** rather
+than falling back to some other provider's key, and there is a test for exactly that.
+
+Providers are transport, not the object of study. The same model id can usually be reached
+through several of them, which matters for reproducibility: `huggingface.co` is unreachable
+from mainland China, so a reviewer there re-runs the identical experiment by changing `@hf`
+to `@modelscope` or `@deepseek` and nothing else. Two caveats worth knowing before you pick
+one — `@modelscope` serves inference only once an Alibaba Cloud account is bound to the
+ModelScope account (until then it returns HTTP 401 with a bind-your-account message, which is
+an account state and not a bad credential), and a free-tier account on any route can return
+HTTP 402 once its included credit is spent. The client reports those two cases distinctly,
+because "your credential is wrong" and "your credential is right and the account is out of
+credit" need different fixes and neither implicates the environment.
+
 The key is read **only** from the process environment, never from a file the code parses,
 never written to a log, never included in any `repr`. Live mode is off by default and
 nothing on the offline path imports it, so CI, the smoke test and the whole test suite stay
@@ -258,9 +282,15 @@ against several models in one go — nothing in the environment is model-specifi
 is just a string, and the judge interface is the only contract.
 
 ```bash
-python3 run_live_demo.py                                        # 3 default models
+python3 run_live_demo.py                                        # 4 default models
 python3 run_live_demo.py --models openai/gpt-oss-120b,qwen/qwen3.6-27b
+python3 run_live_demo.py --models deepseek-ai/DeepSeek-V3.2-Exp@hf   # one model, one route
 ```
+
+Models in one run may come from different providers: an `@provider` suffix routes that model
+to its own endpoint and its own key variables (see *Live mode* above). That is what lets a
+single command put a Groq-served model and a Chinese-lab model side by side under one
+environment, one prompt and one gate.
 
 ```
   model                             lit.mean  valid  probes             rank1  flips
@@ -281,6 +311,51 @@ judge panel is all non-Qwen). You can still pass one with `--models`, and the sc
 the caveat next to it. One default is safety-tuned (`gpt-oss-safeguard-20b`), which is the
 interesting case: the frozen data already found safety tuning bought no measurable protection
 against euphemism, and this re-asks that live.
+
+### Why one default is a Chinese-lab model
+
+All ten frozen judge families are Western labs — AI2, Google, Meta, Microsoft, Mistral,
+OpenAI, TII. That is a real limitation of the frozen panel, and it is also a testable one. If
+the euphemism result were an artefact of one training tradition's data, safety tuning or
+refusal style, then a lineage the environment was never built against is where that would
+show up. `deepseek-ai/DeepSeek-V3.2-Exp` is not in the frozen data, was not consulted while
+the act bank or the scoring prompt were designed, and comes from a lab unconnected to any of
+the ten — so it is the cleanest out-of-distribution check available, and the gate is applied
+to it on exactly the same terms as to everything else.
+
+Both outcomes are informative, and neither is a failure of the environment. If it clears the
+gate, its per-operator ranking is a genuine out-of-lineage read on the finding. If it rates
+the literal acts as acceptable it is **excluded**, exactly as the two IBM Granite models were
+in the frozen panel — that is the validity gate doing its job on a model nobody chose for it.
+
+It cleared the gate. Live literal mean **1.00** on 8 literal acts (gate ≤ 4.0), then 18 probes
+spread evenly over all six operators, three acts each:
+
+```
+  operator            n   mean delta
+  euphemism           3     +2.00
+  nominalization      3     +1.67
+  functionalization   3     +1.00
+  aggregation         3     +1.00
+  agent_deletion      3     +0.00
+  necessity           3     -0.33
+```
+
+Euphemism ranks first, as it does in all ten frozen Western families. Read this for exactly
+what it is and no more: **three acts per operator is far too small to be a statistical
+result**, no gap here would survive its own null, and there were no threshold flips. What it
+is worth is directional and out-of-lineage — the ordering the frozen campaigns found did not
+require a Western judge to produce it, on the first model from a Chinese lab the environment
+was ever pointed at, with no change to the bank, the prompt, the gate or the loop. The
+campaign runs remain the only numbers here that carry statistical weight.
+
+Reproduce it with:
+
+```bash
+export HF_TOKEN=...     # or GOAI_LIVE_API_KEY, or use @deepseek / @modelscope / @openrouter
+python3 run_live_demo.py --models deepseek-ai/DeepSeek-V3.2-Exp@hf \
+    --budget 18 --rounds 6 --n 3 --calibration-n 8 --out live_chinese_judge_report.json
+```
 
 ### What live mode can do that replay cannot
 
@@ -467,6 +542,9 @@ run_live_demo.py                    runs the same environment against several li
                                      architecture is model-agnostic (the organisers' explicit suggestion)
 live_multimodel_report.json         output of run_live_demo.py -- per-model gate decision, probes and rank-1.
                                      NOT an official artifact
+live_chinese_judge_report.json      output of the same script for the Chinese-lab judge
+                                     (deepseek-ai/DeepSeek-V3.2-Exp): gate decision, 18 probes, per-operator
+                                     deltas. NOT an official artifact
 exploration_log_live_demo.jsonl     the per-step log of `env.py --live`, same schema as every replay log
 exploration_log_live_*.jsonl        the per-step log of each model in run_live_demo.py, same schema
 check_semantic_similarity.py        independent embedding-based cross-check of the overlap floor (see above); does not

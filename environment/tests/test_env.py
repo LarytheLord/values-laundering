@@ -1038,3 +1038,162 @@ class TestLiveBaselineReportsItsOwnMode:
         e = make_single_judge_env("j", ["act one alphaword"], base=1,
                                   rewritten=5, delta=4)
         assert e.baseline_no_intervention("j")["mode"] == "replay"
+
+
+class TestProviderRouting:
+    """(11) The judge panel needed a model no single provider serves. Ten frozen
+    judge families are Western labs; adding a Chinese-lab judge means a SECOND
+    endpoint inside one run, not a replacement for the first. resolve_provider
+    is the whole of that mechanism, so its failure modes are the ones that would
+    silently send one provider's credential to another provider's endpoint, or
+    silently change the default route for runs that predate it."""
+
+    def test_a_bare_model_id_keeps_the_historical_behaviour_exactly(self):
+        """No @suffix must mean: no base_url override, default key variables.
+        Returning the default base URL here instead of None would silently
+        outrank --live-base-url and $GOAI_LIVE_BASE_URL for every existing run."""
+        model, base_url, key_envvars = env.resolve_provider("openai/gpt-oss-120b")
+        assert model == "openai/gpt-oss-120b"
+        assert base_url is None
+        assert key_envvars == env.LIVE_API_KEY_ENVVARS
+
+    def test_a_suffix_routes_to_that_providers_endpoint_and_variables(self):
+        model, base_url, key_envvars = env.resolve_provider("deepseek-ai/DeepSeek-V3.2-Exp@hf")
+        assert model == "deepseek-ai/DeepSeek-V3.2-Exp"
+        assert base_url == env.LIVE_PROVIDERS["hf"]["base_url"]
+        assert key_envvars == tuple(env.LIVE_PROVIDERS["hf"]["key_envvars"])
+        # The model id must survive intact: the '@' is routing, not part of it.
+        assert "@" not in model
+
+    def test_an_unknown_provider_fails_before_any_call_is_made(self):
+        """Fail here, not as a confusing HTTP error half way through a paid
+        sweep. The message must name the providers that DO exist."""
+        with pytest.raises(env.LiveAPIError) as ei:
+            env.resolve_provider("some-model@nosuchprovider")
+        msg = str(ei.value)
+        assert "nosuchprovider" in msg
+        for name in env.LIVE_PROVIDERS:
+            assert name in msg
+
+    def test_provider_names_and_whitespace_are_forgiving(self):
+        model, base_url, _ = env.resolve_provider("  a/b @ HF ")
+        assert model == "a/b" and base_url == env.LIVE_PROVIDERS["hf"]["base_url"]
+
+    def test_every_registered_provider_is_https_and_declares_key_variables(self):
+        """A provider entry that carried a literal key, or an http:// endpoint,
+        would be a credential leak and a plaintext-transport bug respectively."""
+        for name, p in env.LIVE_PROVIDERS.items():
+            assert p["base_url"].startswith("https://"), name
+            assert p["key_envvars"], name
+            for var in p["key_envvars"]:
+                # Variable NAMES only. Anything that looks like a value is a bug.
+                assert var.isupper() and " " not in var, (name, var)
+
+    def test_the_default_provider_is_the_frozen_comparable_one(self):
+        """groq is the one provider where a live score is comparable to a frozen
+        score from the same model id. Changing this default silently would break
+        that comparison, so it is pinned by a test."""
+        assert env.DEFAULT_LIVE_PROVIDER == "groq"
+        assert (env.LIVE_PROVIDERS["groq"]["base_url"]
+                == env.DEFAULT_LIVE_BASE_URL)
+
+    def test_a_client_only_reads_the_variables_its_provider_declared(self, monkeypatch):
+        """The isolation property that makes multi-provider runs safe: a run
+        that mixes providers must never send provider A's key to provider B.
+        Here the default variable is set and the provider's is not, so
+        construction must FAIL rather than fall back to the wrong credential."""
+        for name in set(env.LIVE_API_KEY_ENVVARS) | {"HF_TOKEN", "HUGGINGFACE_API_KEY",
+                                                     "HUGGING_FACE_HUB_TOKEN"}:
+            monkeypatch.delenv(name, raising=False)
+        monkeypatch.setenv("GROQ_API_KEY", "a-groq-only-credential")
+        _, base_url, key_envvars = env.resolve_provider("x@hf")
+        assert "GROQ_API_KEY" not in key_envvars
+        with pytest.raises(env.LiveAPIError):
+            env.OpenAICompatibleClient(model="x", base_url=base_url,
+                                       key_envvars=key_envvars)
+
+    def test_the_project_override_variable_crosses_every_provider(self, monkeypatch):
+        """GOAI_LIVE_API_KEY is the deliberate exception to provider isolation:
+        it is the project's own 'use this one credential everywhere' override,
+        and it must be first in every list so that setting it is sufficient.
+        Pinned by a test because silently dropping it from one provider would
+        make that route fail for a user who had configured the documented
+        override and nothing else."""
+        for name, p in env.LIVE_PROVIDERS.items():
+            assert p["key_envvars"][0] == "GOAI_LIVE_API_KEY", name
+
+    def test_a_client_uses_its_providers_own_variable_when_present(self, monkeypatch):
+        for name in set(env.LIVE_API_KEY_ENVVARS):
+            monkeypatch.delenv(name, raising=False)
+        monkeypatch.setenv("HF_TOKEN", "hf-only-credential")
+        _, base_url, key_envvars = env.resolve_provider("x@hf")
+        c = env.OpenAICompatibleClient(model="x", base_url=base_url,
+                                       key_envvars=key_envvars)
+        assert c.key_source == "HF_TOKEN"
+        assert c.base_url == env.LIVE_PROVIDERS["hf"]["base_url"]
+        assert "hf-only-credential" not in repr(c)
+
+
+class TestReasoningFieldFallback:
+    """(12) A reasoning model that spends its whole token budget thinking returns
+    an EMPTY content field, and the answer is in a separate field instead. Groq
+    spells that field `reasoning`; the OpenAI-compatible gateways in front of
+    DeepSeek, GLM, Kimi and MiniMax spell it `reasoning_content`. Reading only
+    Groq's spelling turned a real live score into an unparseable empty string,
+    which the validity gate would then have counted as a MISSING literal score
+    rather than the score the model actually gave -- quietly shifting
+    literal_mean and so the admit/exclude decision itself."""
+
+    class _FakeHTTPResponse:
+        def __init__(self, payload):
+            self._payload = payload
+        def read(self):
+            return json.dumps(self._payload).encode()
+        def __enter__(self):
+            return self
+        def __exit__(self, *a):
+            return False
+
+    def _client_returning(self, monkeypatch, message):
+        monkeypatch.setenv("GOAI_LIVE_API_KEY", "not-a-real-key")
+        c = env.OpenAICompatibleClient(model="m", min_interval=0.0)
+        payload = {"choices": [{"message": message}]}
+        # Only the socket is replaced. json.load still does the real parsing, so
+        # this exercises the client's own response handling rather than a mock
+        # of it -- and nothing outside urlopen is patched, so the global
+        # no-network guarantee elsewhere in this file is unaffected.
+        monkeypatch.setattr(
+            "urllib.request.urlopen",
+            lambda req, timeout=None: self._FakeHTTPResponse(payload))
+        return c
+
+    def test_content_is_preferred_when_it_is_present(self, monkeypatch):
+        c = self._client_returning(monkeypatch,
+                                   {"content": "3", "reasoning_content": "9"})
+        assert c("p") == "3"
+
+    def test_groqs_reasoning_field_is_used_when_content_is_empty(self, monkeypatch):
+        c = self._client_returning(monkeypatch, {"content": "", "reasoning": "7"})
+        assert c("p") == "7"
+
+    def test_reasoning_content_is_used_when_content_is_empty(self, monkeypatch):
+        """The bug this test exists for: without the second spelling this
+        returned "" and parse_score gave None."""
+        c = self._client_returning(monkeypatch,
+                                   {"content": "", "reasoning_content": "7"})
+        assert c("p") == "7"
+        assert env.parse_score(c("p")) == 7
+
+    def test_a_think_block_is_still_stripped_from_either_field(self, monkeypatch):
+        c = self._client_returning(
+            monkeypatch,
+            {"content": None,
+             "reasoning_content": "<think>maybe 9, maybe not</think>2"})
+        assert c("p") == "2"
+
+    def test_no_text_anywhere_stays_empty_rather_than_raising(self, monkeypatch):
+        """An unparseable answer is DATA (the original kernels counted them); a
+        dead endpoint is an error. This path must produce the former."""
+        c = self._client_returning(monkeypatch, {"content": None})
+        assert c("p") == ""
+        assert env.parse_score("") is None

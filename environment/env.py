@@ -267,6 +267,104 @@ DEFAULT_LIVE_MODEL = "openai/gpt-oss-120b"
 # value of any of these -- only the NAME of the variable that supplied it.
 LIVE_API_KEY_ENVVARS = ("GOAI_LIVE_API_KEY", "GROQ_API_KEY", "OPENAI_API_KEY")
 
+# ---------------------------------------------------------------- providers
+#
+# WHY A REGISTRY AND NOT JUST --live-base-url. One base URL was enough while
+# every live judge came from one provider. It stopped being enough the moment
+# the judge panel needed a model no single provider serves: the ten frozen
+# judge families are all Western labs (AI2, Google, Meta, Microsoft, Mistral,
+# OpenAI, TII), and adding a Chinese-lab judge means a second endpoint in the
+# SAME run, not instead of the first. A registry lets one command route
+# `openai/gpt-oss-120b` to Groq and `deepseek-ai/DeepSeek-V3.2-Exp` to a
+# provider that serves it, with the environment, prompt and gate held constant.
+#
+# It also makes the route a flag rather than a fact about this machine. The
+# same model id can be reached through several providers, so a reviewer who
+# cannot reach one (network policy, region, an expired account) can re-run the
+# identical experiment through another by changing one word. That property is
+# the point: a provider is transport, a model is the object of study.
+#
+# Each entry is base_url + the env var names to try, in order. No entry holds,
+# defaults, or hints at a key value.
+#
+# GOAI_LIVE_API_KEY is deliberately first in every list. It is the project's own
+# "use this one credential" override, and it is the only variable that crosses
+# provider boundaries -- so a run that sets it is asserting that one key is
+# valid for every route it uses. Every other variable is provider-specific, and
+# a route whose own variables are all unset FAILS rather than falling back to
+# some other provider's key.
+LIVE_PROVIDERS = {
+    # The default, and the only one where a live score can be compared to a
+    # frozen score from the same model id (data/exp8_groq_results.json).
+    "groq": {
+        "base_url": "https://api.groq.com/openai/v1",
+        "key_envvars": LIVE_API_KEY_ENVVARS,
+        "note": "serves the frozen gpt-oss family; no Chinese lab except Qwen",
+    },
+    # Routes to whichever partner currently serves a model. The broadest
+    # non-Qwen Chinese coverage reachable with one key: DeepSeek, Zhipu/Z.ai
+    # GLM, Moonshot Kimi, MiniMax.
+    "hf": {
+        "base_url": "https://router.huggingface.co/v1",
+        "key_envvars": ("GOAI_LIVE_API_KEY", "HF_TOKEN", "HUGGINGFACE_API_KEY",
+                        "HUGGING_FACE_HUB_TOKEN"),
+        "note": "huggingface.co is unreachable from mainland China; use "
+                "'modelscope' or 'deepseek' for the same models from there",
+    },
+    # The mainland-reachable route to the same model ids. Requires an
+    # Alibaba Cloud account bound to the ModelScope account before any
+    # inference call is served; without that binding it returns HTTP 401 with
+    # a bind-your-account message, which is an account state, not a bad key.
+    "modelscope": {
+        "base_url": "https://api-inference.modelscope.cn/v1",
+        "key_envvars": ("GOAI_LIVE_API_KEY", "MODELSCOPE_API_TOKEN",
+                        "MODELSCOPE_SDK_TOKEN"),
+        "note": "needs an Alibaba Cloud account bound to the ModelScope account",
+    },
+    # First-party, for the DeepSeek models only. Model ids here are the
+    # provider's own short ids (deepseek-chat, deepseek-reasoner), not the
+    # HuggingFace repo ids the other two routes use.
+    "deepseek": {
+        "base_url": "https://api.deepseek.com/v1",
+        "key_envvars": ("GOAI_LIVE_API_KEY", "DEEPSEEK_API_KEY"),
+        "note": "first-party; use the short ids deepseek-chat / deepseek-reasoner",
+    },
+    # An aggregator, so one credential reaches several Chinese lineages at once
+    # (DeepSeek, Zhipu GLM, Moonshot Kimi, MiniMax). Model ids are the
+    # aggregator's own, e.g. deepseek/deepseek-chat or z-ai/glm-4.6.
+    "openrouter": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "key_envvars": ("GOAI_LIVE_API_KEY", "OPENROUTER_API_KEY"),
+        "note": "aggregator; ids look like deepseek/deepseek-chat, z-ai/glm-4.6",
+    },
+}
+DEFAULT_LIVE_PROVIDER = "groq"
+
+
+def resolve_provider(spec):
+    """Split a "model@provider" spec into (model_id, base_url, key_envvars).
+
+    A bare model id keeps the historical behaviour exactly: the default
+    provider's base URL and the default key variables. The "@provider" suffix
+    is the only new syntax, and it is resolved against LIVE_PROVIDERS so an
+    unknown name fails loudly here rather than as a confusing HTTP error later.
+
+    Returns base_url=None for the default provider so that an explicit
+    --live-base-url or $GOAI_LIVE_BASE_URL still wins, which is what callers
+    that predate this function expect.
+    """
+    model, _, prov = str(spec).partition("@")
+    model = model.strip()
+    prov = prov.strip().lower()
+    if not prov:
+        return model, None, LIVE_API_KEY_ENVVARS
+    if prov not in LIVE_PROVIDERS:
+        raise LiveAPIError(
+            f"unknown provider {prov!r} in {spec!r}. "
+            f"Known: {', '.join(sorted(LIVE_PROVIDERS))}.")
+    p = LIVE_PROVIDERS[prov]
+    return model, p["base_url"], tuple(p["key_envvars"])
+
 
 class LiveAPIError(RuntimeError):
     """Raised when the live endpoint cannot be reached or refuses the request.
@@ -361,12 +459,17 @@ class OpenAICompatibleClient:
 
     def __init__(self, model=DEFAULT_LIVE_MODEL, base_url=None, api_key=None,
                  max_tokens=512, temperature=0.0, timeout=90, min_interval=2.0,
-                 max_retries=5, cache_path=None, extra_body=None):
+                 max_retries=5, cache_path=None, extra_body=None,
+                 key_envvars=LIVE_API_KEY_ENVVARS):
         self.model = model
         self.base_url = (base_url or os.environ.get("GOAI_LIVE_BASE_URL")
                          or DEFAULT_LIVE_BASE_URL).rstrip("/")
+        # Which variables this client is allowed to read a key from. Different
+        # providers need different variables, and a run that mixes providers
+        # must not silently send one provider's key to another's endpoint.
+        self.key_envvars = tuple(key_envvars)
         if api_key is None:
-            api_key, self.key_source = resolve_api_key()
+            api_key, self.key_source = resolve_api_key(self.key_envvars)
         else:
             self.key_source = "caller-supplied"
         # Single underscore, and __repr__ below is overridden: this attribute must
@@ -453,7 +556,15 @@ class OpenAICompatibleClient:
                 text = (msg.get("content") or "").strip()
                 if not text:
                     # Reasoning model that spent its whole budget thinking.
-                    text = strip_reasoning(msg.get("reasoning") or "").strip()
+                    # Two spellings in the wild: Groq returns `reasoning`,
+                    # OpenAI-compatible gateways in front of DeepSeek, GLM,
+                    # Kimi and MiniMax return `reasoning_content`. Reading only
+                    # one of them turned a thinking model's answer into an
+                    # unparseable empty string, which the gate would then have
+                    # counted as a missing literal score rather than a real one.
+                    text = strip_reasoning(
+                        msg.get("reasoning")
+                        or msg.get("reasoning_content") or "").strip()
                 self._cache[ck] = text
                 self._save_cache()
                 return text
@@ -474,7 +585,23 @@ class OpenAICompatibleClient:
                 if e.code in (401, 403):
                     hint = (f"  The key came from {self.key_source}; check it is valid "
                             f"for {self.base_url}. (A 403 with a correct key usually "
-                            f"means a missing User-Agent, which this client sets.)")
+                            f"means a missing User-Agent, which this client sets. A 401 "
+                            f"from api-inference.modelscope.* with a valid token usually "
+                            f"means the ModelScope account has no Alibaba Cloud account "
+                            f"bound to it yet, which is an account state and not a bad "
+                            f"credential.)")
+                elif e.code == 402:
+                    # Distinguishing this from 401 matters: it is the difference
+                    # between "your credential is wrong" and "your credential is
+                    # right and the account is out of credit", and a reviewer
+                    # reading a failed row in the multi-model sweep needs to know
+                    # which. Nothing about the environment, prompt or gate is
+                    # implicated by a 402.
+                    hint = (f"  Payment required: the account behind {self.key_source} "
+                            f"has no remaining credit at {self.base_url}. The route "
+                            f"itself works. Either top that account up, or re-run the "
+                            f"same model id through another provider with "
+                            f"'--models <id>@<provider>' (see LIVE_PROVIDERS).")
                 raise LiveAPIError(
                     f"{self.base_url} returned HTTP {e.code} for model "
                     f"{self.model!r}.\n{hint}") from None
@@ -547,7 +674,8 @@ class LiveJudge:
     def __init__(self, model=DEFAULT_LIVE_MODEL, bank=None, key=None, client=None,
                  calibration_n=8, seed=0, binary=False, base_url=None,
                  api_key=None, max_tokens=512, temperature=0.0, min_interval=2.0,
-                 timeout=90, cache_path=None, verbose=False):
+                 timeout=90, cache_path=None, verbose=False,
+                 key_envvars=LIVE_API_KEY_ENVVARS):
         self.bank = bank if bank is not None else Bank()
         self.model = model
         # `key` is this judge's NAME inside Environment.judges -- nothing to do
@@ -561,7 +689,7 @@ class LiveJudge:
         self.client = client if client is not None else OpenAICompatibleClient(
             model=model, base_url=base_url, api_key=api_key, max_tokens=max_tokens,
             temperature=temperature, min_interval=min_interval, timeout=timeout,
-            cache_path=cache_path)
+            cache_path=cache_path, key_envvars=key_envvars)
 
         # act text -> rewrite text, per operator. This is what lets score() keep
         # ReplayJudge's two-argument signature.
@@ -1120,7 +1248,8 @@ def selftest():
 
 def live_demo(model=DEFAULT_LIVE_MODEL, rounds=6, n=2, budget=10, seed=0,
               calibration_n=6, base_url=None, cache_path=None, client=None,
-              bank=None, log_path=None, binary=False, min_interval=2.0, key=None):
+              bank=None, log_path=None, binary=False, min_interval=2.0, key=None,
+              key_envvars=LIVE_API_KEY_ENVVARS):
     """Run the real loop against a real model, printing every probe as it lands.
 
     This is the one-command answer to "does the feedback loop actually run
@@ -1149,7 +1278,7 @@ def live_demo(model=DEFAULT_LIVE_MODEL, rounds=6, n=2, budget=10, seed=0,
     judge = LiveJudge(model=model, bank=bank, calibration_n=calibration_n,
                       seed=seed, base_url=base_url, cache_path=cache_path,
                       client=client, binary=binary, min_interval=min_interval,
-                      key=key)
+                      key=key, key_envvars=key_envvars)
     lm = "n/a" if judge.literal_mean is None else f"{judge.literal_mean:.2f}"
     print(f"  literal mean = {lm}  ->  instrument_valid = {judge.instrument_valid}")
     if not judge.instrument_valid:
@@ -1277,9 +1406,12 @@ if __name__ == "__main__":
     p.add_argument("--live", action="store_true",
                    help="run the same loop against a real chat-completions API. "
                         "Needs a key in one of: " + ", ".join(LIVE_API_KEY_ENVVARS))
-    p.add_argument("--live-model", default=DEFAULT_LIVE_MODEL, metavar="ID",
+    p.add_argument("--live-model", default=DEFAULT_LIVE_MODEL, metavar="ID[@PROVIDER]",
                    help=f"model id to judge with (default: {DEFAULT_LIVE_MODEL}). "
-                        "Try several to show the environment is model-agnostic.")
+                        "Try several to show the environment is model-agnostic. "
+                        "Append @provider to route it: known providers are "
+                        + ", ".join(sorted(LIVE_PROVIDERS)) +
+                        " (e.g. deepseek-ai/DeepSeek-V3.2-Exp@hf).")
     p.add_argument("--live-judge", default=None, metavar="NAME",
                    help="name this judge carries inside Environment "
                         "(default: 'live:<model>')")
@@ -1309,12 +1441,16 @@ if __name__ == "__main__":
         selftest()
     elif a.live:
         try:
-            live_demo(model=a.live_model, rounds=a.live_rounds, n=a.live_n,
+            # An explicit --live-base-url still wins over the provider's, so
+            # nothing that worked before this flag existed changes behaviour.
+            model_id, prov_url, key_envvars = resolve_provider(a.live_model)
+            live_demo(model=model_id, rounds=a.live_rounds, n=a.live_n,
                       budget=a.live_budget, seed=a.seed,
                       calibration_n=a.live_calibration_n,
-                      base_url=a.live_base_url, cache_path=a.live_cache,
+                      base_url=a.live_base_url or prov_url,
+                      cache_path=a.live_cache,
                       binary=a.live_binary, min_interval=a.live_min_interval,
-                      key=a.live_judge)
+                      key=a.live_judge, key_envvars=key_envvars)
         except LiveAPIError as e:
             raise SystemExit(f"\nlive mode could not run:\n  {e}\n")
     elif a.dump_config:
