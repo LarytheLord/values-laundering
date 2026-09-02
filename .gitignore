@@ -3,3 +3,7 @@ __pycache__/
 .DS_Store
 .venv/
 *.egg-info/
+
+# live-mode response caches: real API output, but a run artifact, not a result
+live_cache.json
+*_cache.json
