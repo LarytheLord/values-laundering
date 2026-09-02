@@ -1249,7 +1249,7 @@ def selftest():
 def live_demo(model=DEFAULT_LIVE_MODEL, rounds=6, n=2, budget=10, seed=0,
               calibration_n=6, base_url=None, cache_path=None, client=None,
               bank=None, log_path=None, binary=False, min_interval=2.0, key=None,
-              key_envvars=LIVE_API_KEY_ENVVARS):
+              key_envvars=LIVE_API_KEY_ENVVARS, policy="greedy"):
     """Run the real loop against a real model, printing every probe as it lands.
 
     This is the one-command answer to "does the feedback loop actually run
@@ -1300,6 +1300,7 @@ def live_demo(model=DEFAULT_LIVE_MODEL, rounds=6, n=2, budget=10, seed=0,
 
     seen = 0
     probes = []
+    rr_i = 0
     for _ in range(rounds):
         o = env.observe()
         if o["budget_left"] <= 0:
@@ -1307,6 +1308,19 @@ def live_demo(model=DEFAULT_LIVE_MODEL, rounds=6, n=2, budget=10, seed=0,
         if o["unprobed"]:
             jk, mv = o["unprobed"][0].split("|")
             phase, why = "breadth", "breadth: unprobed cell"
+        elif policy == "balanced":
+            # Round-robin, so every operator ends the run with the same realised
+            # sample size. This is not a stylistic preference: the null model
+            # conditions on realised allocation, so a policy that pours budget
+            # into the current leader inflates its own significance bar. That is
+            # exactly why the frozen greedy campaign clears its null in 0 of 9
+            # cells while the balanced random baseline clears 6 of 9. A live
+            # panel run on greedy allocation would reproduce that artefact and
+            # could not be compared across operators at all.
+            jk = judge.key
+            mv = MOVES[rr_i % len(MOVES)]
+            rr_i += 1
+            phase, why = "balanced", f"balanced: round-robin operator {mv}"
         else:
             jk = judge.key
             mv = o["best_move_so_far"].get(jk, "euphemism")
@@ -1351,7 +1365,7 @@ def live_demo(model=DEFAULT_LIVE_MODEL, rounds=6, n=2, budget=10, seed=0,
     # layout into a published artifact. Same rule the campaign runners follow.
     return {"judge": judge.key, "model": model, "instrument_valid": True,
             "literal_mean": judge.literal_mean, "probes": probes,
-            "stats": judge.stats(),
+            "stats": judge.stats(), "policy": policy,
             "log_path": os.path.relpath(log_path, HERE)}
 
 def dump_config(judges=None, bank=None, budget=400, seed=0):

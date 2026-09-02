@@ -93,6 +93,12 @@ def main():
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--base-url", default=None)
     p.add_argument("--min-interval", type=float, default=2.0)
+    p.add_argument("--policy", choices=("greedy", "balanced"), default="greedy",
+                   help="operator allocation once every cell has been touched. "
+                        "'greedy' deepens the current leader, matching the frozen "
+                        "campaign. 'balanced' round-robins so every operator ends "
+                        "with the same realised n, which is what a cross-operator "
+                        "rank comparison needs (default: %(default)s)")
     p.add_argument("--cache", default=None,
                    help="cache raw API responses here so a rerun is free")
     p.add_argument("--out", default=os.path.join(HERE, "live_multimodel_report.json"),
@@ -138,7 +144,8 @@ def main():
                                 base_url=r["base_url"], cache_path=a.cache,
                                 bank=bank, log_path=log_path,
                                 min_interval=a.min_interval,
-                                key_envvars=r["key_envvars"])
+                                key_envvars=r["key_envvars"],
+                                policy=a.policy)
             out["error"] = None
         except env.LiveAPIError as e:
             # One model being unavailable must not kill the sweep -- report and move on.

@@ -1197,3 +1197,57 @@ class TestReasoningFieldFallback:
         c = self._client_returning(monkeypatch, {"content": None})
         assert c("p") == ""
         assert env.parse_score("") is None
+
+
+class TestLiveDemoBalancedPolicyAllocatesEvenly:
+    """(15) Regression test for a real bug caught mid-run on 2026-09-02.
+
+    `live_demo` inlines greedy: once every cell has been touched, the depth
+    phase deepens `best_move_so_far`. Pointed at a live model for a
+    cross-operator rank comparison, that produced n=194 on the leading
+    operator and n=1 on four others in a 204-probe run. Those numbers cannot
+    be compared: the null model conditions on realised allocation, so a
+    winner-take-most policy inflates its own significance bar. It is the same
+    mechanism that makes the frozen greedy campaign clear its null in 0 of 9
+    cells while the balanced random baseline clears 6 of 9.
+
+    `policy="balanced"` round-robins instead. These tests pin BOTH sides: the
+    balanced policy must allocate evenly, and the greedy default must still
+    concentrate, so the contrast the panel writeup relies on cannot silently
+    disappear in a refactor.
+    """
+
+    def _run(self, tmp_path, policy):
+        bank = _write_live_payload(tmp_path)
+        # Make one operator the runaway leader, so greedy has something to
+        # chase and a broken "balanced" cannot pass by accident.
+        client = FakeClient(replies={"rewrittenasfunctionalization": "9"},
+                            default="1")
+        out = env.live_demo(model="fake/model", rounds=30, n=1, budget=30,
+                            seed=0, calibration_n=3, client=client, bank=bank,
+                            log_path=str(tmp_path / f"log_{policy}.jsonl"),
+                            min_interval=0.0, policy=policy)
+        counts = {}
+        for p in out["probes"]:
+            counts[p["operator"]] = counts.get(p["operator"], 0) + 1
+        return out, counts
+
+    def test_balanced_gives_every_operator_the_same_n(self, tmp_path):
+        out, counts = self._run(tmp_path, "balanced")
+        assert len(counts) == len(env.MOVES), (
+            f"balanced left an operator unprobed: {counts}")
+        assert max(counts.values()) - min(counts.values()) <= 1, (
+            f"balanced allocation is not even: {counts}")
+
+    def test_greedy_still_concentrates(self, tmp_path):
+        out, counts = self._run(tmp_path, "greedy")
+        assert max(counts.values()) >= 3 * min(counts.values()), (
+            "greedy stopped concentrating; the contrast the panel writeup "
+            f"depends on has been lost: {counts}")
+
+    def test_policy_is_recorded_in_the_result(self, tmp_path):
+        # An artifact that does not say which policy produced it cannot be
+        # read correctly six months later, and this run's whole point is that
+        # the policy changes what the numbers mean.
+        out, _ = self._run(tmp_path, "balanced")
+        assert out["policy"] == "balanced"
