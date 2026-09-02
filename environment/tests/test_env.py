@@ -1251,3 +1251,57 @@ class TestLiveDemoBalancedPolicyAllocatesEvenly:
         # the policy changes what the numbers mean.
         out, _ = self._run(tmp_path, "balanced")
         assert out["policy"] == "balanced"
+
+
+class TestUnscoreableProbeNeverEntersTheStatistics:
+    """(16) Regression test for a crash that killed a paid live run.
+
+    A live judge can return a reply the 0-10 parser cannot read; score()
+    reports that as delta None. Replay never can, because its scores were
+    parsed once when the data was frozen, so this whole failure mode is
+    invisible offline. deepseek-v4-flash died at probe 24 of a paid run with
+    `TypeError: can't convert type 'NoneType' to numerator/denominator` from
+    statistics.mean.
+
+    Dropping it is the only defensible handling. Defaulting a missing delta to
+    0 would invent a "rewriting changed nothing" datapoint the judge never
+    gave, which on this scale is a strong claim and not a neutral one.
+    """
+
+    def _env_with_one_unscoreable(self, tmp_path):
+        bank = _write_live_payload(tmp_path)
+        # Unparseable ONLY for the rewrite of one operator, so the literal side
+        # still scores and the probe reaches the delta arithmetic.
+        client = FakeClient(replies={"rewrittenasnecessity": "I would rather not say"},
+                            default="1")
+        judge = env.LiveJudge(bank=bank, client=client, calibration_n=3)
+        e = env.Environment(bank=bank, judges=[judge], budget=40, seed=0,
+                            log_path=str(tmp_path / "unscoreable.jsonl"))
+        return e, judge
+
+    def test_step_survives_an_unparseable_reply(self, tmp_path):
+        e, judge = self._env_with_one_unscoreable(tmp_path)
+        fb = e.step(judge.key, "necessity", n=3)  # must not raise
+        assert fb["unscoreable"] == 3, fb
+        assert fb["deltas"] == [], "a None delta leaked into the deltas list"
+        assert fb["mean_delta"] is None
+
+    def test_unscoreable_probe_is_still_logged(self, tmp_path):
+        e, judge = self._env_with_one_unscoreable(tmp_path)
+        e.step(judge.key, "necessity", n=2)
+        recs = [json.loads(l) for l in open(e.log_path)]
+        assert recs, "the probe vanished from the log entirely"
+        assert all(r.get("unscoreable") for r in recs), (
+            "an unscoreable probe must be marked as such in the log, or it "
+            "reads later as a probe that simply was not run")
+
+    def test_gap_ignores_the_unscoreable_operator(self, tmp_path):
+        # The real damage: a None in results makes _gap crash too, one step
+        # later and far from the cause.
+        e, judge = self._env_with_one_unscoreable(tmp_path)
+        e.step(judge.key, "necessity", n=2)
+        e.step(judge.key, "euphemism", n=2)
+        e.step(judge.key, "aggregation", n=2)
+        g = e._gap(judge.key)  # must not raise
+        assert g is None or g["rank1"] != "necessity", (
+            "an operator with no scoreable probe ranked anyway")

@@ -872,7 +872,8 @@ class Environment:
         if move not in MOVES:
             raise ValueError(f"unknown operator {move!r}")
         judge = self.judges[judge_key]
-        fb = {"scored": 0, "rejected": 0, "deltas": [], "binary_flips": 0, "threshold_flips": 0}
+        fb = {"scored": 0, "rejected": 0, "deltas": [], "binary_flips": 0,
+              "threshold_flips": 0, "unscoreable": 0}
 
         pool = [a for a in self.bank.acts if judge.covers(a["act"], move)]
         self.rng.shuffle(pool)
@@ -900,6 +901,22 @@ class Environment:
                         "literal_score": s["literal"], "rewritten_score": s["rewritten"],
                         "binary_verdict_pair": list(s["binary_pair"]),
                         "threshold_flip": s["threshold_flip"]})
+            # A live judge can return a reply the 0-10 parser cannot read, which
+            # score() reports as delta None. Replay never can, because its scores
+            # were parsed once when the data was frozen. Such a probe is logged in
+            # full so it stays inspectable and countable, but it must NOT enter the
+            # statistics. Appending None crashes statistics.mean the moment any
+            # mean is taken (that is how this was found: deepseek-v4-flash died at
+            # probe 24 of a paid run), and defaulting it to 0 would invent a
+            # "rewriting changed nothing" datapoint the judge never gave, which is
+            # a strong claim, not a neutral one. Dropping it is the same rule the
+            # validity gate already applies to a missing literal score.
+            if s["delta"] is None:
+                rec["unscoreable"] = True
+                self.rejections.append(rec)
+                fb["unscoreable"] += 1
+                self._log(rec)
+                continue
             self.results.setdefault((judge_key, move), []).append(s["delta"])
             fb["deltas"].append(s["delta"])
             fb["scored"] += 1
