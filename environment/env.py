@@ -1356,6 +1356,16 @@ def live_demo(model=DEFAULT_LIVE_MODEL, rounds=6, n=2, budget=10, seed=0,
                 print(f"  {r['step_id']:>2}  {r['operator']:<17} {act:<52} "
                       f"{'--':>4} {'--':>4} {'reject':>6}  {r['rejection_reason']}")
                 continue
+            # An unscoreable probe passed the validator but the judge's reply
+            # could not be parsed, so its scores are None. step() already keeps
+            # it out of the statistics; this loop does its own arithmetic on the
+            # log records it reads back, so it has to know about them too or it
+            # raises TypeError on None - int. Shown rather than hidden: the
+            # unparseable rate is itself evidence about the judge.
+            if r.get("unscoreable"):
+                print(f"  {r['step_id']:>2}  {r['operator']:<17} {act:<52} "
+                      f"{'--':>4} {'--':>4} {'unscored':>8}  judge reply not parseable")
+                continue
             d = r["rewritten_score"] - r["literal_score"]
             print(f"  {r['step_id']:>2}  {r['operator']:<17} {act:<52} "
                   f"{r['literal_score']:>4} {r['rewritten_score']:>4} {d:>+6} "
