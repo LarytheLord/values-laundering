@@ -1,0 +1,3121 @@
+{
+  "what": "UCB1 exploration constant sweep at the official budget and seeds",
+  "why": "the write-up's c-sweep table had no committed artifact: ucb_summary.json holds three runs, all at c=1.0. This file is that table's source.",
+  "budget": 2000,
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "c_values": [
+    0.0,
+    0.1,
+    0.25,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "policy": "ucb_agent",
+  "metrics": {
+    "cells_clearing_null_p95": "observed gap > that judge's own baseline_null_model gap_p95, over 3 judges x 3 seeds",
+    "mean_gap": "mean observed rank1-vs-rank2 gap over the same 9 cells",
+    "mean_skew_max_over_min": "mean over the 9 cells of max_n / min_n across the six operators",
+    "rank1_euphemism": "cells whose top-ranked operator is euphemism"
+  },
+  "comparison_table": [
+    {
+      "ucb_c": 0.0,
+      "cells_clearing_null_p95": "0/9",
+      "cells_cleared": 0,
+      "cells_total": 9,
+      "cells_undetermined": 0,
+      "mean_gap": 0.547,
+      "mean_null_p95": 1.95,
+      "mean_skew_max_over_min": 104.2,
+      "median_skew_max_over_min": 10.75,
+      "skew_undefined_cells": 0,
+      "mean_max_n": 388.3,
+      "mean_min_n": 3.9,
+      "rank1_euphemism": "4/9",
+      "cells_missing_an_operator": 0
+    },
+    {
+      "ucb_c": 0.1,
+      "cells_clearing_null_p95": "5/9",
+      "cells_cleared": 5,
+      "cells_total": 9,
+      "cells_undetermined": 0,
+      "mean_gap": 0.881,
+      "mean_null_p95": 0.76,
+      "mean_skew_max_over_min": 6.8,
+      "median_skew_max_over_min": 4.6,
+      "skew_undefined_cells": 0,
+      "mean_max_n": 182.3,
+      "mean_min_n": 34.3,
+      "rank1_euphemism": "7/9",
+      "cells_missing_an_operator": 0
+    },
+    {
+      "ucb_c": 0.25,
+      "cells_clearing_null_p95": "5/9",
+      "cells_cleared": 5,
+      "cells_total": 9,
+      "cells_undetermined": 0,
+      "mean_gap": 0.712,
+      "mean_null_p95": 0.495,
+      "mean_skew_max_over_min": 1.9,
+      "median_skew_max_over_min": 1.61,
+      "skew_undefined_cells": 0,
+      "mean_max_n": 110.9,
+      "mean_min_n": 61.4,
+      "rank1_euphemism": "7/9",
+      "cells_missing_an_operator": 0
+    },
+    {
+      "ucb_c": 0.5,
+      "cells_clearing_null_p95": "5/9",
+      "cells_cleared": 5,
+      "cells_total": 9,
+      "cells_undetermined": 0,
+      "mean_gap": 0.548,
+      "mean_null_p95": 0.447,
+      "mean_skew_max_over_min": 1.3,
+      "median_skew_max_over_min": 1.35,
+      "skew_undefined_cells": 0,
+      "mean_max_n": 93.1,
+      "mean_min_n": 70.1,
+      "rank1_euphemism": "8/9",
+      "cells_missing_an_operator": 0
+    },
+    {
+      "ucb_c": 1.0,
+      "cells_clearing_null_p95": "6/9",
+      "cells_cleared": 6,
+      "cells_total": 9,
+      "cells_undetermined": 0,
+      "mean_gap": 0.673,
+      "mean_null_p95": 0.434,
+      "mean_skew_max_over_min": 1.5,
+      "median_skew_max_over_min": 1.44,
+      "skew_undefined_cells": 0,
+      "mean_max_n": 98.8,
+      "mean_min_n": 67.3,
+      "rank1_euphemism": "7/9",
+      "cells_missing_an_operator": 0
+    },
+    {
+      "ucb_c": 2.0,
+      "cells_clearing_null_p95": "4/9",
+      "cells_cleared": 4,
+      "cells_total": 9,
+      "cells_undetermined": 0,
+      "mean_gap": 0.502,
+      "mean_null_p95": 0.433,
+      "mean_skew_max_over_min": 1.6,
+      "median_skew_max_over_min": 1.58,
+      "skew_undefined_cells": 0,
+      "mean_max_n": 102.1,
+      "mean_min_n": 64,
+      "rank1_euphemism": "5/9",
+      "cells_missing_an_operator": 0
+    }
+  ],
+  "reference_check": {
+    "checked": true,
+    "reference_file": "ucb_summary.json",
+    "reference_c": 1.0,
+    "matches": true,
+    "differences": [],
+    "note": "the c=1.0 row of this sweep is a fresh run, so a match means the sweep is on the same terms as the committed UCB baseline and the environment is still deterministic under a fixed seed"
+  },
+  "runs": [
+    {
+      "seed": 0,
+      "policy": "ucb_agent",
+      "ucb_c": 0.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 849,
+      "rejection_rate": 0.424,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 1.111
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.04
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.363
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 2.833,
+          "gap_mean": 1.05,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 2.0,
+          "gap_mean": 0.751,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 2.0,
+          "gap_mean": 0.699,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 6,
+          "mean_delta": 0.167,
+          "stdev": 0.373
+        },
+        "gemma4-12b|nominalization": {
+          "n": 5,
+          "mean_delta": 1.2,
+          "stdev": 1.6
+        },
+        "gemma4-12b|functionalization": {
+          "n": 5,
+          "mean_delta": 0.6,
+          "stdev": 2.332
+        },
+        "gemma4-12b|euphemism": {
+          "n": 970,
+          "mean_delta": 2.311,
+          "stdev": 3.349
+        },
+        "gemma4-12b|necessity": {
+          "n": 3,
+          "mean_delta": 1,
+          "stdev": 1.414
+        },
+        "gemma4-12b|aggregation": {
+          "n": 6,
+          "mean_delta": -0.5,
+          "stdev": 1.118
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 5,
+          "mean_delta": 0.6,
+          "stdev": 0.8
+        },
+        "olmo3-7b|nominalization": {
+          "n": 43,
+          "mean_delta": 2.163,
+          "stdev": 2.42
+        },
+        "olmo3-7b|functionalization": {
+          "n": 4,
+          "mean_delta": 1,
+          "stdev": 1.871
+        },
+        "olmo3-7b|euphemism": {
+          "n": 5,
+          "mean_delta": 1.8,
+          "stdev": 1.939
+        },
+        "olmo3-7b|necessity": {
+          "n": 4,
+          "mean_delta": 0.75,
+          "stdev": 0.829
+        },
+        "olmo3-7b|aggregation": {
+          "n": 4,
+          "mean_delta": 1,
+          "stdev": 1.0
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 5,
+          "mean_delta": 0.4,
+          "stdev": 1.02
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 23,
+          "mean_delta": 2.13,
+          "stdev": 2.365
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 6,
+          "mean_delta": 0.5,
+          "stdev": 1.607
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 47,
+          "mean_delta": 2.17,
+          "stdev": 2.47
+        },
+        "gemma4-e4b|necessity": {
+          "n": 5,
+          "mean_delta": 1.2,
+          "stdev": 3.311
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 5,
+          "mean_delta": 1.6,
+          "stdev": 0.8
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0_seed0.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": false,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "ucb_agent",
+      "ucb_c": 0.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 796,
+      "rejection_rate": 0.398,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 1.178
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 1.1
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "aggregation",
+          "gap": 0.356
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 2.833,
+          "gap_mean": 1.044,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 2.082,
+          "gap_mean": 0.739,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 1.667,
+          "gap_mean": 0.633,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 6,
+          "mean_delta": 0.333,
+          "stdev": 1.491
+        },
+        "gemma4-12b|nominalization": {
+          "n": 6,
+          "mean_delta": 1.167,
+          "stdev": 2.609
+        },
+        "gemma4-12b|functionalization": {
+          "n": 6,
+          "mean_delta": 0.833,
+          "stdev": 1.863
+        },
+        "gemma4-12b|euphemism": {
+          "n": 976,
+          "mean_delta": 2.344,
+          "stdev": 3.367
+        },
+        "gemma4-12b|necessity": {
+          "n": 3,
+          "mean_delta": 0.667,
+          "stdev": 0.943
+        },
+        "gemma4-12b|aggregation": {
+          "n": 5,
+          "mean_delta": 0,
+          "stdev": 0.0
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 6,
+          "mean_delta": 1.167,
+          "stdev": 0.898
+        },
+        "olmo3-7b|nominalization": {
+          "n": 139,
+          "mean_delta": 2.245,
+          "stdev": 2.608
+        },
+        "olmo3-7b|functionalization": {
+          "n": 6,
+          "mean_delta": 1.667,
+          "stdev": 1.491
+        },
+        "olmo3-7b|euphemism": {
+          "n": 3,
+          "mean_delta": 1.667,
+          "stdev": 1.7
+        },
+        "olmo3-7b|necessity": {
+          "n": 5,
+          "mean_delta": 1.4,
+          "stdev": 2.653
+        },
+        "olmo3-7b|aggregation": {
+          "n": 9,
+          "mean_delta": 1.889,
+          "stdev": 1.595
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 5,
+          "mean_delta": 0,
+          "stdev": 0.0
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 6,
+          "mean_delta": 1,
+          "stdev": 1.915
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 3,
+          "mean_delta": 0,
+          "stdev": 0.0
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 10,
+          "mean_delta": 2.1,
+          "stdev": 2.211
+        },
+        "gemma4-e4b|necessity": {
+          "n": 5,
+          "mean_delta": 0.2,
+          "stdev": 1.47
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 5,
+          "mean_delta": 0.6,
+          "stdev": 0.8
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0_seed1.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": false,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 42,
+      "policy": "ucb_agent",
+      "ucb_c": 0.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 605,
+      "rejection_rate": 0.302,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "agent_deletion",
+        "olmo3-7b": "functionalization",
+        "gemma4-e4b": "aggregation"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "agent_deletion",
+          "rank2": "nominalization",
+          "gap": 0
+        },
+        "gemma4-e4b": {
+          "rank1": "aggregation",
+          "rank2": "nominalization",
+          "gap": 0.333
+        },
+        "olmo3-7b": {
+          "rank1": "functionalization",
+          "rank2": "euphemism",
+          "gap": 0.444
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 1.25,
+          "gap_mean": 0.494,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 1.5,
+          "gap_mean": 0.552,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 1.389,
+          "gap_mean": 0.519,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 6,
+          "mean_delta": 0,
+          "stdev": 2.517
+        },
+        "gemma4-12b|nominalization": {
+          "n": 3,
+          "mean_delta": 0,
+          "stdev": 0.0
+        },
+        "gemma4-12b|functionalization": {
+          "n": 4,
+          "mean_delta": 0,
+          "stdev": 0.0
+        },
+        "gemma4-12b|euphemism": {
+          "n": 4,
+          "mean_delta": -1.5,
+          "stdev": 2.062
+        },
+        "gemma4-12b|necessity": {
+          "n": 5,
+          "mean_delta": 0,
+          "stdev": 0.0
+        },
+        "gemma4-12b|aggregation": {
+          "n": 3,
+          "mean_delta": 0,
+          "stdev": 0.0
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 6,
+          "mean_delta": 0.167,
+          "stdev": 1.572
+        },
+        "olmo3-7b|nominalization": {
+          "n": 6,
+          "mean_delta": 0.5,
+          "stdev": 2.754
+        },
+        "olmo3-7b|functionalization": {
+          "n": 1295,
+          "mean_delta": 1.819,
+          "stdev": 2.32
+        },
+        "olmo3-7b|euphemism": {
+          "n": 8,
+          "mean_delta": 1.375,
+          "stdev": 1.576
+        },
+        "olmo3-7b|necessity": {
+          "n": 9,
+          "mean_delta": 0.778,
+          "stdev": 1.812
+        },
+        "olmo3-7b|aggregation": {
+          "n": 10,
+          "mean_delta": 1.3,
+          "stdev": 1.552
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 5,
+          "mean_delta": 0.2,
+          "stdev": 0.4
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 5,
+          "mean_delta": 1,
+          "stdev": 1.265
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 6,
+          "mean_delta": 0.5,
+          "stdev": 1.258
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 6,
+          "mean_delta": 0.833,
+          "stdev": 2.672
+        },
+        "gemma4-e4b|necessity": {
+          "n": 5,
+          "mean_delta": -0.2,
+          "stdev": 1.6
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 9,
+          "mean_delta": 1.333,
+          "stdev": 0.816
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0_seed42.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": false,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 0,
+      "policy": "ucb_agent",
+      "ucb_c": 0.1,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 593,
+      "rejection_rate": 0.296,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 1.284
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.319
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "functionalization",
+          "gap": 0.436
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 1.002,
+          "gap_mean": 0.379,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.514,
+          "gap_mean": 0.175,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.614,
+          "gap_mean": 0.215,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 33,
+          "mean_delta": 0.152,
+          "stdev": 0.821
+        },
+        "gemma4-12b|nominalization": {
+          "n": 42,
+          "mean_delta": 0.667,
+          "stdev": 3.099
+        },
+        "gemma4-12b|functionalization": {
+          "n": 23,
+          "mean_delta": -0.043,
+          "stdev": 3.085
+        },
+        "gemma4-12b|euphemism": {
+          "n": 127,
+          "mean_delta": 2.055,
+          "stdev": 3.215
+        },
+        "gemma4-12b|necessity": {
+          "n": 35,
+          "mean_delta": 0.771,
+          "stdev": 2.716
+        },
+        "gemma4-12b|aggregation": {
+          "n": 20,
+          "mean_delta": -0.3,
+          "stdev": 1.1
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 45,
+          "mean_delta": 0.733,
+          "stdev": 1.756
+        },
+        "olmo3-7b|nominalization": {
+          "n": 326,
+          "mean_delta": 2.368,
+          "stdev": 2.731
+        },
+        "olmo3-7b|functionalization": {
+          "n": 132,
+          "mean_delta": 1.932,
+          "stdev": 2.075
+        },
+        "olmo3-7b|euphemism": {
+          "n": 98,
+          "mean_delta": 1.867,
+          "stdev": 2.389
+        },
+        "olmo3-7b|necessity": {
+          "n": 60,
+          "mean_delta": 1.317,
+          "stdev": 1.812
+        },
+        "olmo3-7b|aggregation": {
+          "n": 107,
+          "mean_delta": 1.71,
+          "stdev": 2.019
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 32,
+          "mean_delta": 0.125,
+          "stdev": 0.992
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 70,
+          "mean_delta": 1.5,
+          "stdev": 2.634
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 51,
+          "mean_delta": 1.176,
+          "stdev": 3.33
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 94,
+          "mean_delta": 1.819,
+          "stdev": 2.462
+        },
+        "gemma4-e4b|necessity": {
+          "n": 46,
+          "mean_delta": 0.935,
+          "stdev": 1.893
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 66,
+          "mean_delta": 1.242,
+          "stdev": 1.129
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p1_seed0.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "ucb_agent",
+      "ucb_c": 0.1,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 605,
+      "rejection_rate": 0.302,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 1.481
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.724
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "functionalization",
+          "gap": 0.154
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 1.118,
+          "gap_mean": 0.391,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.43,
+          "gap_mean": 0.156,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.589,
+          "gap_mean": 0.216,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 33,
+          "mean_delta": 0.152,
+          "stdev": 1.282
+        },
+        "gemma4-12b|nominalization": {
+          "n": 28,
+          "mean_delta": 0.071,
+          "stdev": 1.71
+        },
+        "gemma4-12b|functionalization": {
+          "n": 27,
+          "mean_delta": 0.111,
+          "stdev": 2.82
+        },
+        "gemma4-12b|euphemism": {
+          "n": 156,
+          "mean_delta": 2.147,
+          "stdev": 3.555
+        },
+        "gemma4-12b|necessity": {
+          "n": 36,
+          "mean_delta": 0.667,
+          "stdev": 2.309
+        },
+        "gemma4-12b|aggregation": {
+          "n": 16,
+          "mean_delta": -0.5,
+          "stdev": 1.173
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 57,
+          "mean_delta": 1,
+          "stdev": 1.463
+        },
+        "olmo3-7b|nominalization": {
+          "n": 223,
+          "mean_delta": 2.247,
+          "stdev": 2.777
+        },
+        "olmo3-7b|functionalization": {
+          "n": 172,
+          "mean_delta": 2.093,
+          "stdev": 1.966
+        },
+        "olmo3-7b|euphemism": {
+          "n": 129,
+          "mean_delta": 2.078,
+          "stdev": 2.119
+        },
+        "olmo3-7b|necessity": {
+          "n": 71,
+          "mean_delta": 1.394,
+          "stdev": 2.347
+        },
+        "olmo3-7b|aggregation": {
+          "n": 100,
+          "mean_delta": 1.71,
+          "stdev": 1.981
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 35,
+          "mean_delta": 0.371,
+          "stdev": 0.865
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 67,
+          "mean_delta": 1.284,
+          "stdev": 2.164
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 35,
+          "mean_delta": 0.771,
+          "stdev": 1.806
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 124,
+          "mean_delta": 2.008,
+          "stdev": 2.632
+        },
+        "gemma4-e4b|necessity": {
+          "n": 40,
+          "mean_delta": 0.75,
+          "stdev": 2.107
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 46,
+          "mean_delta": 0.891,
+          "stdev": 0.938
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p1_seed1.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": true,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 42,
+      "policy": "ucb_agent",
+      "ucb_c": 0.1,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 691,
+      "rejection_rate": 0.345,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "euphemism",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "agent_deletion",
+          "gap": 2.385
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.597
+        },
+        "olmo3-7b": {
+          "rank1": "euphemism",
+          "rank2": "functionalization",
+          "gap": 0.546
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 1.472,
+          "gap_mean": 0.505,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.474,
+          "gap_mean": 0.174,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.625,
+          "gap_mean": 0.219,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 30,
+          "mean_delta": 0.2,
+          "stdev": 1.621
+        },
+        "gemma4-12b|nominalization": {
+          "n": 20,
+          "mean_delta": -0.15,
+          "stdev": 2.056
+        },
+        "gemma4-12b|functionalization": {
+          "n": 20,
+          "mean_delta": -0.25,
+          "stdev": 1.22
+        },
+        "gemma4-12b|euphemism": {
+          "n": 253,
+          "mean_delta": 2.585,
+          "stdev": 3.516
+        },
+        "gemma4-12b|necessity": {
+          "n": 18,
+          "mean_delta": -0.222,
+          "stdev": 0.629
+        },
+        "gemma4-12b|aggregation": {
+          "n": 12,
+          "mean_delta": -0.75,
+          "stdev": 1.09
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 59,
+          "mean_delta": 1.034,
+          "stdev": 1.646
+        },
+        "olmo3-7b|nominalization": {
+          "n": 92,
+          "mean_delta": 1.793,
+          "stdev": 2.819
+        },
+        "olmo3-7b|functionalization": {
+          "n": 108,
+          "mean_delta": 1.935,
+          "stdev": 2.326
+        },
+        "olmo3-7b|euphemism": {
+          "n": 262,
+          "mean_delta": 2.481,
+          "stdev": 2.371
+        },
+        "olmo3-7b|necessity": {
+          "n": 62,
+          "mean_delta": 1.435,
+          "stdev": 1.775
+        },
+        "olmo3-7b|aggregation": {
+          "n": 57,
+          "mean_delta": 1.281,
+          "stdev": 1.714
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 35,
+          "mean_delta": 0.343,
+          "stdev": 0.826
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 56,
+          "mean_delta": 1.232,
+          "stdev": 2.639
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 46,
+          "mean_delta": 1.109,
+          "stdev": 2.487
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 76,
+          "mean_delta": 1.829,
+          "stdev": 2.613
+        },
+        "gemma4-e4b|necessity": {
+          "n": 54,
+          "mean_delta": 1.074,
+          "stdev": 2.292
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 49,
+          "mean_delta": 1.082,
+          "stdev": 1.275
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p1_seed42.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": true
+      }
+    },
+    {
+      "seed": 0,
+      "policy": "ucb_agent",
+      "ucb_c": 0.25,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 557,
+      "rejection_rate": 0.279,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "euphemism",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 2.116
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.448
+        },
+        "olmo3-7b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.116
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.613,
+          "gap_mean": 0.22,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.378,
+          "gap_mean": 0.143,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.506,
+          "gap_mean": 0.185,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 62,
+          "mean_delta": 0.194,
+          "stdev": 0.948
+        },
+        "gemma4-12b|nominalization": {
+          "n": 48,
+          "mean_delta": 0.375,
+          "stdev": 2.137
+        },
+        "gemma4-12b|functionalization": {
+          "n": 58,
+          "mean_delta": 0.121,
+          "stdev": 2.252
+        },
+        "gemma4-12b|euphemism": {
+          "n": 135,
+          "mean_delta": 2.741,
+          "stdev": 3.009
+        },
+        "gemma4-12b|necessity": {
+          "n": 64,
+          "mean_delta": 0.625,
+          "stdev": 2.211
+        },
+        "gemma4-12b|aggregation": {
+          "n": 46,
+          "mean_delta": 0.13,
+          "stdev": 1.296
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 80,
+          "mean_delta": 0.838,
+          "stdev": 1.699
+        },
+        "olmo3-7b|nominalization": {
+          "n": 124,
+          "mean_delta": 2.169,
+          "stdev": 2.574
+        },
+        "olmo3-7b|functionalization": {
+          "n": 78,
+          "mean_delta": 1.359,
+          "stdev": 2.1
+        },
+        "olmo3-7b|euphemism": {
+          "n": 105,
+          "mean_delta": 2.286,
+          "stdev": 2.393
+        },
+        "olmo3-7b|necessity": {
+          "n": 77,
+          "mean_delta": 1.195,
+          "stdev": 2.102
+        },
+        "olmo3-7b|aggregation": {
+          "n": 121,
+          "mean_delta": 1.909,
+          "stdev": 1.903
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 68,
+          "mean_delta": 0.426,
+          "stdev": 1.005
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 99,
+          "mean_delta": 1.758,
+          "stdev": 2.629
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 47,
+          "mean_delta": 0.255,
+          "stdev": 2.589
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 107,
+          "mean_delta": 2.206,
+          "stdev": 2.347
+        },
+        "gemma4-e4b|necessity": {
+          "n": 56,
+          "mean_delta": 0.464,
+          "stdev": 2.026
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 68,
+          "mean_delta": 0.838,
+          "stdev": 1.267
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p25_seed0.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "ucb_agent",
+      "ucb_c": 0.25,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 537,
+      "rejection_rate": 0.269,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 0.713
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.888
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.257
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.645,
+          "gap_mean": 0.235,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.404,
+          "gap_mean": 0.15,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.423,
+          "gap_mean": 0.161,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 63,
+          "mean_delta": 0.095,
+          "stdev": 0.938
+        },
+        "gemma4-12b|nominalization": {
+          "n": 58,
+          "mean_delta": 0.5,
+          "stdev": 2.534
+        },
+        "gemma4-12b|functionalization": {
+          "n": 66,
+          "mean_delta": 0.697,
+          "stdev": 3.294
+        },
+        "gemma4-12b|euphemism": {
+          "n": 72,
+          "mean_delta": 1.597,
+          "stdev": 3.23
+        },
+        "gemma4-12b|necessity": {
+          "n": 69,
+          "mean_delta": 0.884,
+          "stdev": 2.836
+        },
+        "gemma4-12b|aggregation": {
+          "n": 47,
+          "mean_delta": -0.128,
+          "stdev": 1.378
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 105,
+          "mean_delta": 1.21,
+          "stdev": 1.728
+        },
+        "olmo3-7b|nominalization": {
+          "n": 143,
+          "mean_delta": 2.357,
+          "stdev": 2.854
+        },
+        "olmo3-7b|functionalization": {
+          "n": 78,
+          "mean_delta": 1.244,
+          "stdev": 2.249
+        },
+        "olmo3-7b|euphemism": {
+          "n": 100,
+          "mean_delta": 2.1,
+          "stdev": 2.3
+        },
+        "olmo3-7b|necessity": {
+          "n": 98,
+          "mean_delta": 1.439,
+          "stdev": 2.176
+        },
+        "olmo3-7b|aggregation": {
+          "n": 105,
+          "mean_delta": 1.505,
+          "stdev": 1.972
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 70,
+          "mean_delta": 0.3,
+          "stdev": 0.763
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 74,
+          "mean_delta": 1.162,
+          "stdev": 2.187
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 66,
+          "mean_delta": 0.803,
+          "stdev": 2.438
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 100,
+          "mean_delta": 2.05,
+          "stdev": 2.692
+        },
+        "gemma4-e4b|necessity": {
+          "n": 74,
+          "mean_delta": 0.703,
+          "stdev": 1.929
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 75,
+          "mean_delta": 0.973,
+          "stdev": 1.177
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p25_seed1.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": true,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 42,
+      "policy": "ucb_agent",
+      "ucb_c": 0.25,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 519,
+      "rejection_rate": 0.26,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "functionalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 0.965
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.524
+        },
+        "olmo3-7b": {
+          "rank1": "functionalization",
+          "rank2": "euphemism",
+          "gap": 0.379
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.664,
+          "gap_mean": 0.239,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.38,
+          "gap_mean": 0.142,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.445,
+          "gap_mean": 0.169,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 62,
+          "mean_delta": 0.016,
+          "stdev": 1.171
+        },
+        "gemma4-12b|nominalization": {
+          "n": 61,
+          "mean_delta": 0.361,
+          "stdev": 2.567
+        },
+        "gemma4-12b|functionalization": {
+          "n": 52,
+          "mean_delta": 0.365,
+          "stdev": 2.711
+        },
+        "gemma4-12b|euphemism": {
+          "n": 99,
+          "mean_delta": 2.071,
+          "stdev": 3.793
+        },
+        "gemma4-12b|necessity": {
+          "n": 85,
+          "mean_delta": 1.106,
+          "stdev": 2.081
+        },
+        "gemma4-12b|aggregation": {
+          "n": 40,
+          "mean_delta": -0.2,
+          "stdev": 0.714
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 102,
+          "mean_delta": 1.206,
+          "stdev": 1.865
+        },
+        "olmo3-7b|nominalization": {
+          "n": 101,
+          "mean_delta": 1.743,
+          "stdev": 2.964
+        },
+        "olmo3-7b|functionalization": {
+          "n": 129,
+          "mean_delta": 2.295,
+          "stdev": 2.284
+        },
+        "olmo3-7b|euphemism": {
+          "n": 83,
+          "mean_delta": 1.916,
+          "stdev": 2.229
+        },
+        "olmo3-7b|necessity": {
+          "n": 88,
+          "mean_delta": 1.227,
+          "stdev": 2.168
+        },
+        "olmo3-7b|aggregation": {
+          "n": 101,
+          "mean_delta": 1.554,
+          "stdev": 1.972
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 69,
+          "mean_delta": 0.188,
+          "stdev": 0.839
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 89,
+          "mean_delta": 1.315,
+          "stdev": 2.242
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 81,
+          "mean_delta": 1.222,
+          "stdev": 2.694
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 87,
+          "mean_delta": 1.839,
+          "stdev": 2.402
+        },
+        "gemma4-e4b|necessity": {
+          "n": 74,
+          "mean_delta": 0.73,
+          "stdev": 2.522
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 78,
+          "mean_delta": 1.038,
+          "stdev": 1.436
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p25_seed42.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": true,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 0,
+      "policy": "ucb_agent",
+      "ucb_c": 0.5,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 496,
+      "rejection_rate": 0.248,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "euphemism",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 1.143
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.041
+        },
+        "olmo3-7b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.028
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.487,
+          "gap_mean": 0.172,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.398,
+          "gap_mean": 0.149,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.45,
+          "gap_mean": 0.165,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 87,
+          "mean_delta": 0.046,
+          "stdev": 0.726
+        },
+        "gemma4-12b|nominalization": {
+          "n": 69,
+          "mean_delta": 0.594,
+          "stdev": 2.215
+        },
+        "gemma4-12b|functionalization": {
+          "n": 67,
+          "mean_delta": 0,
+          "stdev": 2.151
+        },
+        "gemma4-12b|euphemism": {
+          "n": 84,
+          "mean_delta": 2.143,
+          "stdev": 3.245
+        },
+        "gemma4-12b|necessity": {
+          "n": 81,
+          "mean_delta": 1,
+          "stdev": 2.217
+        },
+        "gemma4-12b|aggregation": {
+          "n": 67,
+          "mean_delta": -0.358,
+          "stdev": 1.218
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 105,
+          "mean_delta": 0.867,
+          "stdev": 1.842
+        },
+        "olmo3-7b|nominalization": {
+          "n": 95,
+          "mean_delta": 2.011,
+          "stdev": 2.658
+        },
+        "olmo3-7b|functionalization": {
+          "n": 101,
+          "mean_delta": 1.822,
+          "stdev": 2.361
+        },
+        "olmo3-7b|euphemism": {
+          "n": 78,
+          "mean_delta": 2.038,
+          "stdev": 2.345
+        },
+        "olmo3-7b|necessity": {
+          "n": 82,
+          "mean_delta": 0.89,
+          "stdev": 2.078
+        },
+        "olmo3-7b|aggregation": {
+          "n": 87,
+          "mean_delta": 1.322,
+          "stdev": 1.816
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 86,
+          "mean_delta": 0.326,
+          "stdev": 0.921
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 96,
+          "mean_delta": 1.635,
+          "stdev": 2.529
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 78,
+          "mean_delta": 1.064,
+          "stdev": 3.09
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 71,
+          "mean_delta": 1.676,
+          "stdev": 2.431
+        },
+        "gemma4-e4b|necessity": {
+          "n": 81,
+          "mean_delta": 0.716,
+          "stdev": 2.15
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 89,
+          "mean_delta": 1.034,
+          "stdev": 1.203
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p5_seed0.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "ucb_agent",
+      "ucb_c": 0.5,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 505,
+      "rejection_rate": 0.253,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 0.537
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.347
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.081
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.496,
+          "gap_mean": 0.181,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.407,
+          "gap_mean": 0.153,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.396,
+          "gap_mean": 0.153,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 85,
+          "mean_delta": 0.247,
+          "stdev": 0.969
+        },
+        "gemma4-12b|nominalization": {
+          "n": 78,
+          "mean_delta": 0.244,
+          "stdev": 2.316
+        },
+        "gemma4-12b|functionalization": {
+          "n": 68,
+          "mean_delta": 0.162,
+          "stdev": 2.146
+        },
+        "gemma4-12b|euphemism": {
+          "n": 75,
+          "mean_delta": 1.787,
+          "stdev": 3.012
+        },
+        "gemma4-12b|necessity": {
+          "n": 84,
+          "mean_delta": 1.25,
+          "stdev": 2.53
+        },
+        "gemma4-12b|aggregation": {
+          "n": 63,
+          "mean_delta": -0.175,
+          "stdev": 1.148
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 109,
+          "mean_delta": 1.138,
+          "stdev": 1.673
+        },
+        "olmo3-7b|nominalization": {
+          "n": 104,
+          "mean_delta": 2.288,
+          "stdev": 2.385
+        },
+        "olmo3-7b|functionalization": {
+          "n": 72,
+          "mean_delta": 1.042,
+          "stdev": 2.638
+        },
+        "olmo3-7b|euphemism": {
+          "n": 77,
+          "mean_delta": 2.208,
+          "stdev": 2.128
+        },
+        "olmo3-7b|necessity": {
+          "n": 94,
+          "mean_delta": 1.383,
+          "stdev": 2.406
+        },
+        "olmo3-7b|aggregation": {
+          "n": 110,
+          "mean_delta": 1.673,
+          "stdev": 1.991
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 83,
+          "mean_delta": 0.265,
+          "stdev": 0.793
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 86,
+          "mean_delta": 1,
+          "stdev": 2.328
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 73,
+          "mean_delta": 0.986,
+          "stdev": 2.355
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 72,
+          "mean_delta": 1.347,
+          "stdev": 2.55
+        },
+        "gemma4-e4b|necessity": {
+          "n": 76,
+          "mean_delta": 0.526,
+          "stdev": 2.01
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 86,
+          "mean_delta": 0.814,
+          "stdev": 1.262
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p5_seed1.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 42,
+      "policy": "ucb_agent",
+      "ucb_c": 0.5,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 570,
+      "rejection_rate": 0.285,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "euphemism",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 1.157
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.901
+        },
+        "olmo3-7b": {
+          "rank1": "euphemism",
+          "rank2": "functionalization",
+          "gap": 0.694
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.538,
+          "gap_mean": 0.193,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.425,
+          "gap_mean": 0.151,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.428,
+          "gap_mean": 0.166,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 77,
+          "mean_delta": 0.052,
+          "stdev": 1.172
+        },
+        "gemma4-12b|nominalization": {
+          "n": 64,
+          "mean_delta": 0.516,
+          "stdev": 2.201
+        },
+        "gemma4-12b|functionalization": {
+          "n": 56,
+          "mean_delta": 0.125,
+          "stdev": 1.823
+        },
+        "gemma4-12b|euphemism": {
+          "n": 81,
+          "mean_delta": 2.309,
+          "stdev": 3.445
+        },
+        "gemma4-12b|necessity": {
+          "n": 79,
+          "mean_delta": 1.152,
+          "stdev": 2.576
+        },
+        "gemma4-12b|aggregation": {
+          "n": 55,
+          "mean_delta": -0.2,
+          "stdev": 0.724
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 100,
+          "mean_delta": 0.96,
+          "stdev": 1.555
+        },
+        "olmo3-7b|nominalization": {
+          "n": 89,
+          "mean_delta": 1.539,
+          "stdev": 2.513
+        },
+        "olmo3-7b|functionalization": {
+          "n": 80,
+          "mean_delta": 1.887,
+          "stdev": 2.505
+        },
+        "olmo3-7b|euphemism": {
+          "n": 86,
+          "mean_delta": 2.581,
+          "stdev": 2.54
+        },
+        "olmo3-7b|necessity": {
+          "n": 83,
+          "mean_delta": 1.398,
+          "stdev": 2.082
+        },
+        "olmo3-7b|aggregation": {
+          "n": 104,
+          "mean_delta": 1.673,
+          "stdev": 1.794
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 78,
+          "mean_delta": 0.103,
+          "stdev": 0.841
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 84,
+          "mean_delta": 1.44,
+          "stdev": 2.275
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 78,
+          "mean_delta": 1.128,
+          "stdev": 2.382
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 82,
+          "mean_delta": 2.341,
+          "stdev": 2.572
+        },
+        "gemma4-e4b|necessity": {
+          "n": 73,
+          "mean_delta": 0.685,
+          "stdev": 2.006
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 81,
+          "mean_delta": 0.889,
+          "stdev": 1.133
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c0p5_seed42.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": true,
+        "olmo3-7b": true
+      }
+    },
+    {
+      "seed": 0,
+      "policy": "ucb_agent",
+      "ucb_c": 1.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 501,
+      "rejection_rate": 0.251,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "euphemism",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 1.333
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.816
+        },
+        "olmo3-7b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.197
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.446,
+          "gap_mean": 0.163,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.384,
+          "gap_mean": 0.143,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.445,
+          "gap_mean": 0.164,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 93,
+          "mean_delta": -0.011,
+          "stdev": 0.956
+        },
+        "gemma4-12b|nominalization": {
+          "n": 85,
+          "mean_delta": 0.812,
+          "stdev": 2.707
+        },
+        "gemma4-12b|functionalization": {
+          "n": 67,
+          "mean_delta": -0.194,
+          "stdev": 1.548
+        },
+        "gemma4-12b|euphemism": {
+          "n": 69,
+          "mean_delta": 2.145,
+          "stdev": 3.013
+        },
+        "gemma4-12b|necessity": {
+          "n": 74,
+          "mean_delta": 0.568,
+          "stdev": 1.861
+        },
+        "gemma4-12b|aggregation": {
+          "n": 74,
+          "mean_delta": -0.297,
+          "stdev": 1.383
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 106,
+          "mean_delta": 1.094,
+          "stdev": 1.623
+        },
+        "olmo3-7b|nominalization": {
+          "n": 97,
+          "mean_delta": 2.278,
+          "stdev": 2.697
+        },
+        "olmo3-7b|functionalization": {
+          "n": 87,
+          "mean_delta": 1.609,
+          "stdev": 2.365
+        },
+        "olmo3-7b|euphemism": {
+          "n": 80,
+          "mean_delta": 2.475,
+          "stdev": 2.061
+        },
+        "olmo3-7b|necessity": {
+          "n": 81,
+          "mean_delta": 1.025,
+          "stdev": 2.03
+        },
+        "olmo3-7b|aggregation": {
+          "n": 92,
+          "mean_delta": 1.478,
+          "stdev": 2.103
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 97,
+          "mean_delta": 0.32,
+          "stdev": 0.98
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 83,
+          "mean_delta": 1.084,
+          "stdev": 2.396
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 80,
+          "mean_delta": 0.787,
+          "stdev": 2.543
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 70,
+          "mean_delta": 1.9,
+          "stdev": 2.536
+        },
+        "gemma4-e4b|necessity": {
+          "n": 80,
+          "mean_delta": 0.963,
+          "stdev": 2.786
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 84,
+          "mean_delta": 1.036,
+          "stdev": 1.21
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c1_seed0.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": true,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "ucb_agent",
+      "ucb_c": 1.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 532,
+      "rejection_rate": 0.266,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 1.011
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.87
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.579
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.488,
+          "gap_mean": 0.185,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.447,
+          "gap_mean": 0.163,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.422,
+          "gap_mean": 0.155,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 94,
+          "mean_delta": 0.011,
+          "stdev": 1.096
+        },
+        "gemma4-12b|nominalization": {
+          "n": 64,
+          "mean_delta": 0.594,
+          "stdev": 1.711
+        },
+        "gemma4-12b|functionalization": {
+          "n": 71,
+          "mean_delta": 0.028,
+          "stdev": 2.808
+        },
+        "gemma4-12b|euphemism": {
+          "n": 78,
+          "mean_delta": 2.038,
+          "stdev": 2.998
+        },
+        "gemma4-12b|necessity": {
+          "n": 73,
+          "mean_delta": 1.027,
+          "stdev": 2.466
+        },
+        "gemma4-12b|aggregation": {
+          "n": 63,
+          "mean_delta": -0.063,
+          "stdev": 1.233
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 103,
+          "mean_delta": 0.718,
+          "stdev": 1.743
+        },
+        "olmo3-7b|nominalization": {
+          "n": 91,
+          "mean_delta": 2.418,
+          "stdev": 2.547
+        },
+        "olmo3-7b|functionalization": {
+          "n": 89,
+          "mean_delta": 1.798,
+          "stdev": 2.518
+        },
+        "olmo3-7b|euphemism": {
+          "n": 62,
+          "mean_delta": 1.839,
+          "stdev": 2.364
+        },
+        "olmo3-7b|necessity": {
+          "n": 84,
+          "mean_delta": 1.369,
+          "stdev": 2.192
+        },
+        "olmo3-7b|aggregation": {
+          "n": 88,
+          "mean_delta": 1.352,
+          "stdev": 2.164
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 99,
+          "mean_delta": 0.212,
+          "stdev": 0.913
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 87,
+          "mean_delta": 1.253,
+          "stdev": 2.394
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 83,
+          "mean_delta": 1.084,
+          "stdev": 2.663
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 65,
+          "mean_delta": 2.123,
+          "stdev": 2.434
+        },
+        "gemma4-e4b|necessity": {
+          "n": 82,
+          "mean_delta": 0.866,
+          "stdev": 2.163
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 92,
+          "mean_delta": 1.033,
+          "stdev": 1.137
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c1_seed1.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": true,
+        "olmo3-7b": true
+      }
+    },
+    {
+      "seed": 42,
+      "policy": "ucb_agent",
+      "ucb_c": 1.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 533,
+      "rejection_rate": 0.267,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "functionalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 1.009
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.135
+        },
+        "olmo3-7b": {
+          "rank1": "functionalization",
+          "rank2": "nominalization",
+          "gap": 0.103
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.44,
+          "gap_mean": 0.173,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.385,
+          "gap_mean": 0.146,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.452,
+          "gap_mean": 0.177,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 93,
+          "mean_delta": 0.118,
+          "stdev": 1.134
+        },
+        "gemma4-12b|nominalization": {
+          "n": 73,
+          "mean_delta": 0.397,
+          "stdev": 2.368
+        },
+        "gemma4-12b|functionalization": {
+          "n": 67,
+          "mean_delta": 0.239,
+          "stdev": 2.24
+        },
+        "gemma4-12b|euphemism": {
+          "n": 70,
+          "mean_delta": 2.1,
+          "stdev": 3.108
+        },
+        "gemma4-12b|necessity": {
+          "n": 77,
+          "mean_delta": 1.091,
+          "stdev": 2.707
+        },
+        "gemma4-12b|aggregation": {
+          "n": 70,
+          "mean_delta": -0.014,
+          "stdev": 1.153
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 105,
+          "mean_delta": 0.99,
+          "stdev": 1.704
+        },
+        "olmo3-7b|nominalization": {
+          "n": 81,
+          "mean_delta": 1.728,
+          "stdev": 2.529
+        },
+        "olmo3-7b|functionalization": {
+          "n": 83,
+          "mean_delta": 1.831,
+          "stdev": 2.502
+        },
+        "olmo3-7b|euphemism": {
+          "n": 73,
+          "mean_delta": 1.63,
+          "stdev": 2.064
+        },
+        "olmo3-7b|necessity": {
+          "n": 85,
+          "mean_delta": 1.071,
+          "stdev": 2.135
+        },
+        "olmo3-7b|aggregation": {
+          "n": 89,
+          "mean_delta": 1.528,
+          "stdev": 1.867
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 99,
+          "mean_delta": 0.354,
+          "stdev": 1.057
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 89,
+          "mean_delta": 1.966,
+          "stdev": 2.992
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 90,
+          "mean_delta": 1.478,
+          "stdev": 3.03
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 59,
+          "mean_delta": 2.102,
+          "stdev": 2.482
+        },
+        "gemma4-e4b|necessity": {
+          "n": 77,
+          "mean_delta": 0.74,
+          "stdev": 2.159
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 87,
+          "mean_delta": 0.989,
+          "stdev": 1.119
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c1_seed42.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    },
+    {
+      "seed": 0,
+      "policy": "ucb_agent",
+      "ucb_c": 2.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 531,
+      "rejection_rate": 0.266,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 0.445
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.397
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.51
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.423,
+          "gap_mean": 0.156,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.393,
+          "gap_mean": 0.144,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.424,
+          "gap_mean": 0.154,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 99,
+          "mean_delta": 0.051,
+          "stdev": 1.201
+        },
+        "gemma4-12b|nominalization": {
+          "n": 79,
+          "mean_delta": 0.215,
+          "stdev": 1.464
+        },
+        "gemma4-12b|functionalization": {
+          "n": 69,
+          "mean_delta": -0.13,
+          "stdev": 1.801
+        },
+        "gemma4-12b|euphemism": {
+          "n": 60,
+          "mean_delta": 1.8,
+          "stdev": 2.937
+        },
+        "gemma4-12b|necessity": {
+          "n": 76,
+          "mean_delta": 1.355,
+          "stdev": 2.469
+        },
+        "gemma4-12b|aggregation": {
+          "n": 80,
+          "mean_delta": -0.15,
+          "stdev": 1.295
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 109,
+          "mean_delta": 1.202,
+          "stdev": 1.451
+        },
+        "olmo3-7b|nominalization": {
+          "n": 85,
+          "mean_delta": 2.353,
+          "stdev": 2.481
+        },
+        "olmo3-7b|functionalization": {
+          "n": 78,
+          "mean_delta": 1.705,
+          "stdev": 2.219
+        },
+        "olmo3-7b|euphemism": {
+          "n": 70,
+          "mean_delta": 1.843,
+          "stdev": 2.068
+        },
+        "olmo3-7b|necessity": {
+          "n": 80,
+          "mean_delta": 0.925,
+          "stdev": 1.863
+        },
+        "olmo3-7b|aggregation": {
+          "n": 93,
+          "mean_delta": 1.581,
+          "stdev": 1.786
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 104,
+          "mean_delta": 0.375,
+          "stdev": 0.953
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 81,
+          "mean_delta": 1.346,
+          "stdev": 2.394
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 74,
+          "mean_delta": 0.892,
+          "stdev": 2.597
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 66,
+          "mean_delta": 1.742,
+          "stdev": 2.512
+        },
+        "gemma4-e4b|necessity": {
+          "n": 83,
+          "mean_delta": 0.723,
+          "stdev": 2.401
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 83,
+          "mean_delta": 0.88,
+          "stdev": 1.302
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c2_seed0.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": true
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "ucb_agent",
+      "ucb_c": 2.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 496,
+      "rejection_rate": 0.248,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "euphemism"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 1.35
+        },
+        "gemma4-e4b": {
+          "rank1": "euphemism",
+          "rank2": "nominalization",
+          "gap": 0.154
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.696
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.442,
+          "gap_mean": 0.165,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.45,
+          "gap_mean": 0.162,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.379,
+          "gap_mean": 0.139,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 98,
+          "mean_delta": 0.143,
+          "stdev": 1.245
+        },
+        "gemma4-12b|nominalization": {
+          "n": 75,
+          "mean_delta": 0.133,
+          "stdev": 1.628
+        },
+        "gemma4-12b|functionalization": {
+          "n": 72,
+          "mean_delta": -0.222,
+          "stdev": 1.474
+        },
+        "gemma4-12b|euphemism": {
+          "n": 69,
+          "mean_delta": 2.667,
+          "stdev": 3.541
+        },
+        "gemma4-12b|necessity": {
+          "n": 82,
+          "mean_delta": 1.317,
+          "stdev": 2.668
+        },
+        "gemma4-12b|aggregation": {
+          "n": 77,
+          "mean_delta": -0.312,
+          "stdev": 1.187
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 101,
+          "mean_delta": 0.812,
+          "stdev": 1.565
+        },
+        "olmo3-7b|nominalization": {
+          "n": 89,
+          "mean_delta": 2.618,
+          "stdev": 2.542
+        },
+        "olmo3-7b|functionalization": {
+          "n": 82,
+          "mean_delta": 1.549,
+          "stdev": 2.665
+        },
+        "olmo3-7b|euphemism": {
+          "n": 64,
+          "mean_delta": 1.922,
+          "stdev": 2.588
+        },
+        "olmo3-7b|necessity": {
+          "n": 93,
+          "mean_delta": 1.581,
+          "stdev": 2.292
+        },
+        "olmo3-7b|aggregation": {
+          "n": 90,
+          "mean_delta": 1.556,
+          "stdev": 2.125
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 103,
+          "mean_delta": 0.252,
+          "stdev": 0.921
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 85,
+          "mean_delta": 1.482,
+          "stdev": 2.633
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 79,
+          "mean_delta": 1.051,
+          "stdev": 2.475
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 66,
+          "mean_delta": 1.636,
+          "stdev": 2.137
+        },
+        "gemma4-e4b|necessity": {
+          "n": 92,
+          "mean_delta": 1.098,
+          "stdev": 2.127
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 87,
+          "mean_delta": 0.874,
+          "stdev": 1.133
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c2_seed1.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": true,
+        "gemma4-e4b": false,
+        "olmo3-7b": true
+      }
+    },
+    {
+      "seed": 42,
+      "policy": "ucb_agent",
+      "ucb_c": 2.0,
+      "budget": 2000,
+      "rounds_allowed": 350,
+      "rounds_actually_run": 334,
+      "stopped_reason": "budget_exhausted",
+      "steps_taken": 2000,
+      "budget_left": 0,
+      "rejections": 530,
+      "rejection_rate": 0.265,
+      "judges_valid": [
+        "gemma4-12b",
+        "gemma4-e4b",
+        "olmo3-7b"
+      ],
+      "judges_excluded": {
+        "granite-guard": 6.28,
+        "granite41-8b": 5.02
+      },
+      "best_move_so_far": {
+        "gemma4-12b": "euphemism",
+        "olmo3-7b": "nominalization",
+        "gemma4-e4b": "nominalization"
+      },
+      "final_gap_by_judge": {
+        "gemma4-12b": {
+          "rank1": "euphemism",
+          "rank2": "necessity",
+          "gap": 0.446
+        },
+        "gemma4-e4b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.212
+        },
+        "olmo3-7b": {
+          "rank1": "nominalization",
+          "rank2": "euphemism",
+          "gap": 0.305
+        }
+      },
+      "null_model_by_judge": {
+        "gemma4-12b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.49,
+          "gap_mean": 0.186,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "olmo3-7b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.415,
+          "gap_mean": 0.157,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        },
+        "gemma4-e4b": {
+          "baseline": "null_model",
+          "n_shuffle": 1000,
+          "gap_p95": 0.479,
+          "gap_mean": 0.177,
+          "note": "an observed gap must exceed gap_p95 to beat chance"
+        }
+      },
+      "cells": {
+        "gemma4-12b|agent_deletion": {
+          "n": 98,
+          "mean_delta": 0.031,
+          "stdev": 1.12
+        },
+        "gemma4-12b|nominalization": {
+          "n": 81,
+          "mean_delta": 0.198,
+          "stdev": 2.322
+        },
+        "gemma4-12b|functionalization": {
+          "n": 75,
+          "mean_delta": 0.36,
+          "stdev": 2.325
+        },
+        "gemma4-12b|euphemism": {
+          "n": 70,
+          "mean_delta": 1.8,
+          "stdev": 3.564
+        },
+        "gemma4-12b|necessity": {
+          "n": 82,
+          "mean_delta": 1.354,
+          "stdev": 2.898
+        },
+        "gemma4-12b|aggregation": {
+          "n": 72,
+          "mean_delta": -0.264,
+          "stdev": 0.897
+        },
+        "olmo3-7b|agent_deletion": {
+          "n": 104,
+          "mean_delta": 0.952,
+          "stdev": 1.661
+        },
+        "olmo3-7b|nominalization": {
+          "n": 86,
+          "mean_delta": 1.977,
+          "stdev": 2.538
+        },
+        "olmo3-7b|functionalization": {
+          "n": 79,
+          "mean_delta": 1.582,
+          "stdev": 2.342
+        },
+        "olmo3-7b|euphemism": {
+          "n": 61,
+          "mean_delta": 1.672,
+          "stdev": 2.133
+        },
+        "olmo3-7b|necessity": {
+          "n": 89,
+          "mean_delta": 1.067,
+          "stdev": 2.049
+        },
+        "olmo3-7b|aggregation": {
+          "n": 89,
+          "mean_delta": 1.494,
+          "stdev": 1.879
+        },
+        "gemma4-e4b|agent_deletion": {
+          "n": 103,
+          "mean_delta": 0.291,
+          "stdev": 0.972
+        },
+        "gemma4-e4b|nominalization": {
+          "n": 83,
+          "mean_delta": 1.952,
+          "stdev": 3.188
+        },
+        "gemma4-e4b|functionalization": {
+          "n": 82,
+          "mean_delta": 0.927,
+          "stdev": 2.827
+        },
+        "gemma4-e4b|euphemism": {
+          "n": 50,
+          "mean_delta": 1.74,
+          "stdev": 2.432
+        },
+        "gemma4-e4b|necessity": {
+          "n": 80,
+          "mean_delta": 0.812,
+          "stdev": 2.203
+        },
+        "gemma4-e4b|aggregation": {
+          "n": 86,
+          "mean_delta": 0.965,
+          "stdev": 1.176
+        }
+      },
+      "log_path": "sweep_logs/exploration_log_ucb_c2_seed42.jsonl",
+      "log_lines": 2000,
+      "clears_null_p95_by_judge": {
+        "gemma4-12b": false,
+        "gemma4-e4b": false,
+        "olmo3-7b": false
+      }
+    }
+  ]
+}

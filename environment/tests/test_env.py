@@ -17,7 +17,11 @@ depends on:
       that policy alone and so invalidate any cross-policy comparison, and
   (6) ucb_agent's UCB1 initialization sweep and its bounded reward scale,
       either of which failing quietly would leave the policy looking like a
-      bandit while behaving like something else.
+      bandit while behaving like something else, plus that policy's
+      exploration constant being unreachable from run_ucb_baseline.py's
+      command line, which is what left the write-up's c-sweep with no
+      committed artifact behind it and no way for a reader to re-derive a
+      single row of it.
 A generic "does it run" test would have caught none of these; each test here
 is shaped after the specific failure, not after the function signature.
 
@@ -45,6 +49,15 @@ _spec = importlib.util.spec_from_file_location("env_under_test", ENV_PATH)
 env = importlib.util.module_from_spec(_spec)
 sys.modules["env_under_test"] = env
 _spec.loader.exec_module(env)
+
+# run_ucb_baseline.py is a sibling of env.py, not of this file, and this
+# project has no package layout, so its directory has to go on sys.path
+# explicitly. It is imported normally rather than through importlib because,
+# unlike env.py, it is only read here for its argument parsing and its
+# log-path policy -- neither of which touches the frozen data files at import
+# time.
+sys.path.insert(0, str(ENV_PATH.parent))
+import run_ucb_baseline  # noqa: E402
 
 GATE = env.GATE
 OVERLAP_FLOOR = env.OVERLAP_FLOOR
@@ -595,6 +608,93 @@ class TestUCBAgentHandlesCellsThatNeverScore:
         assert e.results.get(("j", dead_move)) is None  # never accumulated a delta
         # and the init phase still ended: later rounds use the mean+bonus rule
         assert any(t["why"].startswith("ucb:") for t in trace)
+
+
+class TestUCBBaselineRunnerExposesTheExplorationConstant:
+    """Defends against the specific failure an audit found in this repository:
+    run_ucb_baseline.py hardcoded c = 1.0 with no override, so the exploration
+    constant sweep the write-up leans on could not be re-derived here at all.
+    The committed ucb_summary.json is three runs, every one of them c=1.0.
+
+    Three things have to hold at once for that fix to be worth anything, and
+    each gets a test. The flag has to reach ucb_agent and be recorded, or the
+    sweep is measuring nothing. The default has to stay exactly 1.0 writing
+    exactly ucb_summary.json, or the committed artifact stops being what a
+    bare invocation reproduces. And a non-default c must not be able to land
+    on the committed filenames, because Environment truncates its log on
+    construction and the summary would then say c=1.0 over another policy's
+    trace."""
+
+    def test_default_c_is_still_the_committed_value(self):
+        args = run_ucb_baseline.parse_args([])
+        assert args.c == 1.0
+        assert args.c == run_ucb_baseline.UCB_C
+        assert Path(args.out).name == "ucb_summary.json"
+
+    def test_c_flag_is_parsed_as_a_float(self):
+        args = run_ucb_baseline.parse_args(["--c", "0.0", "--out", "/tmp/x.json"])
+        assert args.c == 0.0
+        assert args.out == "/tmp/x.json"
+
+    def test_non_default_c_refuses_the_committed_summary_path(self):
+        # argparse's error() raises SystemExit(2). The point is that it stops
+        # rather than writing: a c=0 run landing on ucb_summary.json would
+        # replace a cited result with different numbers under a filename that
+        # still claims to be the c=1.0 baseline.
+        with pytest.raises(SystemExit):
+            run_ucb_baseline.parse_args(["--c", "0.0"])
+
+    def test_negative_c_is_rejected(self):
+        with pytest.raises(SystemExit):
+            run_ucb_baseline.parse_args(["--c", "-1.0", "--out", "/tmp/x.json"])
+
+    def test_only_the_default_c_writes_the_committed_log_filenames(self):
+        default = run_ucb_baseline.default_log_path(0, run_ucb_baseline.UCB_C)
+        assert Path(default).name == "exploration_log_ucb_seed0.jsonl"
+        assert Path(default).parent == ENV_PATH.parent
+
+        for c in (0.0, 0.1, 0.25, 0.5, 2.0):
+            p = Path(run_ucb_baseline.default_log_path(0, c))
+            assert p.parent.name == "sweep_logs", c
+            assert p.name != "exploration_log_ucb_seed0.jsonl", c
+        # and distinct c values never collide on one filename
+        names = {run_ucb_baseline.default_log_path(0, c)
+                 for c in (0.0, 0.1, 0.25, 0.5, 1.0, 2.0)}
+        assert len(names) == 6
+
+    def test_the_c_it_was_given_reaches_ucb_agent_and_the_summary(
+        self, tmp_path, monkeypatch, three_valid_judges_bank_and_judges
+    ):
+        """The wiring test. A --c flag that parses correctly and is then
+        dropped on the floor before ucb_agent sees it would leave the sweep
+        producing six identical rows, which is worse than no sweep at all."""
+        bank, judges = three_valid_judges_bank_and_judges
+        seen = []
+        real_agent = run_ucb_baseline.ucb_agent
+
+        def spy(e, rounds=None, c=None):
+            seen.append(c)
+            return real_agent(e, rounds=rounds, c=c)
+
+        monkeypatch.setattr(run_ucb_baseline, "Bank", lambda: bank)
+        monkeypatch.setattr(run_ucb_baseline, "load_judges", lambda: judges)
+        monkeypatch.setattr(run_ucb_baseline, "ucb_agent", spy)
+        monkeypatch.setattr(run_ucb_baseline, "BUDGET", 120)
+        monkeypatch.setattr(run_ucb_baseline, "ROUNDS", 20)
+
+        log_path = str(tmp_path / "ucb_c0_seed0.jsonl")
+        summary = run_ucb_baseline.run_seed(0, c=0.0, log_path=log_path)
+
+        assert seen == [0.0], "the c passed to run_seed never reached ucb_agent"
+        assert summary["ucb_c"] == 0.0, "the summary would misreport its own c"
+        assert summary["steps_taken"] > 0
+
+        # and the log the run actually wrote agrees with the summary, so the
+        # recorded c cannot drift from the trace it labels
+        recs = [json.loads(line) for line in open(log_path)]
+        cs = {r["agent_observation"]["ucb_c"] for r in recs
+              if r.get("agent_observation")}
+        assert cs == {0.0}, cs
 
 
 # ===========================================================================
