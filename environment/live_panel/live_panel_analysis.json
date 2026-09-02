@@ -1,0 +1,289 @@
+{
+  "models": [
+    {
+      "model": "deepseek/deepseek-v4-flash-0731",
+      "provider": "openrouter",
+      "policy": "balanced",
+      "error": null,
+      "literal_mean": 0.4166666666666667,
+      "instrument_valid": true,
+      "n_probes": 219,
+      "status": "analysed",
+      "per_operator": {
+        "agent_deletion": {
+          "mean_delta": 0.1087,
+          "n": 46
+        },
+        "nominalization": {
+          "mean_delta": 0.3,
+          "n": 40
+        },
+        "functionalization": {
+          "mean_delta": 0.8846,
+          "n": 26
+        },
+        "euphemism": {
+          "mean_delta": 1.6333,
+          "n": 30
+        },
+        "necessity": {
+          "mean_delta": 0.575,
+          "n": 40
+        },
+        "aggregation": {
+          "mean_delta": 0.7297,
+          "n": 37
+        }
+      },
+      "n_min": 26,
+      "n_max": 46,
+      "rank1": "euphemism",
+      "rank2": "functionalization",
+      "gap": 0.7487,
+      "null_gap_p95": 0.6897,
+      "H1_euphemism_rank1": true,
+      "H2_gap_clears_null": true,
+      "threshold_flips": 22
+    },
+    {
+      "model": "minimax/minimax-m3",
+      "provider": "openrouter",
+      "policy": "balanced",
+      "error": null,
+      "literal_mean": 0.8333333333333334,
+      "instrument_valid": true,
+      "n_probes": 221,
+      "status": "analysed",
+      "per_operator": {
+        "agent_deletion": {
+          "mean_delta": -0.1702,
+          "n": 47
+        },
+        "nominalization": {
+          "mean_delta": 1.3,
+          "n": 40
+        },
+        "functionalization": {
+          "mean_delta": 1.0741,
+          "n": 27
+        },
+        "euphemism": {
+          "mean_delta": 1.4,
+          "n": 30
+        },
+        "necessity": {
+          "mean_delta": 0.85,
+          "n": 40
+        },
+        "aggregation": {
+          "mean_delta": 0.1892,
+          "n": 37
+        }
+      },
+      "n_min": 27,
+      "n_max": 47,
+      "rank1": "euphemism",
+      "rank2": "nominalization",
+      "gap": 0.1,
+      "null_gap_p95": 0.5823,
+      "H1_euphemism_rank1": true,
+      "H2_gap_clears_null": false,
+      "threshold_flips": 20
+    },
+    {
+      "model": "moonshotai/kimi-k2.6",
+      "provider": "openrouter",
+      "policy": "balanced",
+      "error": null,
+      "literal_mean": 0.4166666666666667,
+      "instrument_valid": true,
+      "n_probes": 221,
+      "status": "analysed",
+      "per_operator": {
+        "agent_deletion": {
+          "mean_delta": 0.0638,
+          "n": 47
+        },
+        "nominalization": {
+          "mean_delta": 0.575,
+          "n": 40
+        },
+        "functionalization": {
+          "mean_delta": 1.0741,
+          "n": 27
+        },
+        "euphemism": {
+          "mean_delta": 1.2,
+          "n": 30
+        },
+        "necessity": {
+          "mean_delta": 1.35,
+          "n": 40
+        },
+        "aggregation": {
+          "mean_delta": -0.7568,
+          "n": 37
+        }
+      },
+      "n_min": 27,
+      "n_max": 47,
+      "rank1": "necessity",
+      "rank2": "euphemism",
+      "gap": 0.15,
+      "null_gap_p95": 0.9218,
+      "H1_euphemism_rank1": false,
+      "H2_gap_clears_null": false,
+      "threshold_flips": 22
+    },
+    {
+      "model": "tencent/hy3",
+      "provider": "openrouter",
+      "policy": "balanced",
+      "error": null,
+      "literal_mean": 0.4166666666666667,
+      "instrument_valid": true,
+      "n_probes": 221,
+      "status": "analysed",
+      "per_operator": {
+        "agent_deletion": {
+          "mean_delta": 0.1064,
+          "n": 47
+        },
+        "nominalization": {
+          "mean_delta": 0.325,
+          "n": 40
+        },
+        "functionalization": {
+          "mean_delta": 1.5926,
+          "n": 27
+        },
+        "euphemism": {
+          "mean_delta": 0.9333,
+          "n": 30
+        },
+        "necessity": {
+          "mean_delta": 0.775,
+          "n": 40
+        },
+        "aggregation": {
+          "mean_delta": -0.1081,
+          "n": 37
+        }
+      },
+      "n_min": 27,
+      "n_max": 47,
+      "rank1": "functionalization",
+      "rank2": "euphemism",
+      "gap": 0.6593,
+      "null_gap_p95": 0.6176,
+      "H1_euphemism_rank1": false,
+      "H2_gap_clears_null": true,
+      "threshold_flips": 13
+    },
+    {
+      "model": "tencent/hy4-preview",
+      "provider": "openrouter",
+      "policy": "balanced",
+      "error": null,
+      "literal_mean": 1.0833333333333333,
+      "instrument_valid": true,
+      "n_probes": 221,
+      "status": "analysed",
+      "per_operator": {
+        "agent_deletion": {
+          "mean_delta": 0.5957,
+          "n": 47
+        },
+        "nominalization": {
+          "mean_delta": 3.075,
+          "n": 40
+        },
+        "functionalization": {
+          "mean_delta": 2.2593,
+          "n": 27
+        },
+        "euphemism": {
+          "mean_delta": 3.7,
+          "n": 30
+        },
+        "necessity": {
+          "mean_delta": 3.8,
+          "n": 40
+        },
+        "aggregation": {
+          "mean_delta": 0.3243,
+          "n": 37
+        }
+      },
+      "n_min": 27,
+      "n_max": 47,
+      "rank1": "necessity",
+      "rank2": "euphemism",
+      "gap": 0.1,
+      "null_gap_p95": 1.4602,
+      "H1_euphemism_rank1": false,
+      "H2_gap_clears_null": false,
+      "threshold_flips": 63
+    },
+    {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "openrouter",
+      "policy": "balanced",
+      "error": null,
+      "literal_mean": 2,
+      "instrument_valid": true,
+      "n_probes": 221,
+      "status": "analysed",
+      "per_operator": {
+        "agent_deletion": {
+          "mean_delta": 0.2766,
+          "n": 47
+        },
+        "nominalization": {
+          "mean_delta": 0.45,
+          "n": 40
+        },
+        "functionalization": {
+          "mean_delta": 0.963,
+          "n": 27
+        },
+        "euphemism": {
+          "mean_delta": -0.9667,
+          "n": 30
+        },
+        "necessity": {
+          "mean_delta": 0.4,
+          "n": 40
+        },
+        "aggregation": {
+          "mean_delta": 0.8378,
+          "n": 37
+        }
+      },
+      "n_min": 27,
+      "n_max": 47,
+      "rank1": "functionalization",
+      "rank2": "aggregation",
+      "gap": 0.1251,
+      "null_gap_p95": 1.1858,
+      "H1_euphemism_rank1": false,
+      "H2_gap_clears_null": false,
+      "threshold_flips": 44
+    }
+  ],
+  "trials": 2000,
+  "seed": 0,
+  "summary": {
+    "models_reported": 6,
+    "cleared_gate": 6,
+    "excluded_by_gate": 0,
+    "errored": 0,
+    "H1_euphemism_rank1": 2,
+    "H2_clears_null": 2,
+    "rank1_counts": {
+      "euphemism": 2,
+      "necessity": 2,
+      "functionalization": 2
+    }
+  }
+}
