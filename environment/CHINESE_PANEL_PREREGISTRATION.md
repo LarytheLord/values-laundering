@@ -99,3 +99,46 @@ false` and writes per-model logs under `exploration_log_live_*.jsonl`. The froze
 campaign artifacts (`campaign_summary.json`, `random_baseline_summary.json`,
 `ucb_summary.json`, `exploration_log.jsonl`) are not touched, and CI diffs the
 committed selftest log to prove it.
+
+---
+
+## Amendment, 2026-09-03: a post-hoc Western control
+
+**This section was written AFTER the Chinese panel results were known. It is not
+pre-registered, and labelling it honestly matters more than the tidiness of claiming it was.**
+
+The Chinese panel returned euphemism rank-1 in 2 of 6, against 9 of 9 in the frozen Western panel.
+Read as written, that says the effect is lineage-dependent. But the two panels differ along more
+than lineage:
+
+| | frozen Western panel | Chinese panel |
+|---|---|---|
+| mode | replay of stored judgments | live API |
+| model age | up to two years old | all released in 2026 |
+| weights | mostly open-weight | all hosted proprietary |
+
+So "Chinese versus Western" is confounded with "current frontier versus older open-weight" and
+with "live versus replay". A reviewer is entitled to say the gap has nothing to do with lineage.
+
+**The control.** Six current Western models, five labs, run through the identical live loop with
+balanced allocation, the same bank, the same prompt, and the same two gates:
+
+`openai/gpt-5.6-luna-pro`, `google/gemini-3.7-flash`, `anthropic/claude-sonnet-5`,
+`x-ai/grok-4.6`, `mistralai/mistral-small-2603`, `mistralai/mistral-medium-3-5`.
+
+Tier is matched deliberately. The Chinese panel was mostly flash and small tier, so pairing it
+against Western flagships would replace one confound with another. Two Mistral models of different
+size mirror the two Tencent models in the Chinese panel.
+
+**What each outcome would mean, fixed before the run:**
+
+- **Euphemism ranks first in most of these.** Then recency, live mode and proprietary weights are
+  not what drove the Chinese result, and lineage survives as the explanation.
+- **Euphemism does not rank first here either.** Then the honest conclusion changes: the effect
+  tracks model generation or capability rather than lineage, and Finding 6's framing is wrong. It
+  would mean the frozen panel's 9 of 9 is a fact about older open-weight models, not about the
+  West.
+
+The second outcome is the one that costs us the current headline. It gets reported the same either
+way, in the same detail, and the reporting rules from the original pre-registration carry over
+unchanged.
