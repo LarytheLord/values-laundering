@@ -117,7 +117,10 @@ def main():
                    help="glob for the per-model report JSON files")
     p.add_argument("--trials", type=int, default=2000)
     p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--out", default=os.path.join(HERE, "live_panel_analysis.json"))
+    p.add_argument("--out", default=os.path.join(HERE, "live_panel", "live_panel_analysis.json"),
+                   help="default writes beside the reports it summarises, so a rerun "
+                        "updates the committed artifact instead of dropping a second "
+                        "copy one directory up (default: %(default)s)")
     a = p.parse_args()
 
     res = analyse(glob.glob(a.reports), trials=a.trials, seed=a.seed)
