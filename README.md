@@ -180,7 +180,7 @@ Where this work is being contributed back, rather than just published:
   the thread rather than glossed. **No PR is merged yet** — this is an open, live design
   discussion, described here as exactly that.
 - **ModelScope 魔搭** — dataset mirror, reachable from mainland China where Hugging Face is not:
-  **https://www.modelscope.cn/datasets/LarytheLord/values-laundering**
+  **https://www.modelscope.ai/datasets/LarytheLord/values-laundering**
 - **Hugging Face** — [dataset](https://huggingface.co/datasets/LarytheLord/values-laundering)
   and [interactive Space](https://huggingface.co/spaces/LarytheLord/values-laundering-explorer).
 - **UK AISI `inspect_evals`** — a companion evaluation was proposed to their register (see below).
