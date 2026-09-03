@@ -1,0 +1,165 @@
+{
+  "what": "Frozen panel subsampled to the live panels' per-operator n",
+  "why": "Rules out sample size as the explanation for euphemism ranking around second in the live panels while ranking first in 9 of 9 frozen cells. Only gate-valid judges are summarised, because a judge that fails the instrument-validity gate is not measuring the thing being compared.",
+  "gate": 4.0,
+  "resamples": 2000,
+  "seed": 0,
+  "sampling": "without replacement from real per-act deltas",
+  "per_judge": [
+    {
+      "judge": "olmo3-7b",
+      "model": "allenai/Olmo-3-7B-Instruct",
+      "literal_mean": 2.642,
+      "gate_valid": true,
+      "full_n": 81,
+      "n_operators": 6,
+      "by_size": {
+        "30": {
+          "euphemism_rank1_rate": 0.9145,
+          "mean_euphemism_rank": 1.096
+        },
+        "40": {
+          "euphemism_rank1_rate": 0.9755,
+          "mean_euphemism_rank": 1.027
+        },
+        "50": {
+          "euphemism_rank1_rate": 0.991,
+          "mean_euphemism_rank": 1.0095
+        },
+        "81": {
+          "euphemism_rank1_rate": 1.0,
+          "mean_euphemism_rank": 1
+        }
+      }
+    },
+    {
+      "judge": "falcon-h1r",
+      "literal_mean": null,
+      "gate_valid": null,
+      "note": "no parseable literal scores; excluded upstream"
+    },
+    {
+      "judge": "gemma4-e4b",
+      "model": "google/gemma-4-E4B-it",
+      "literal_mean": 1.0741,
+      "gate_valid": true,
+      "full_n": 81,
+      "n_operators": 6,
+      "by_size": {
+        "30": {
+          "euphemism_rank1_rate": 0.956,
+          "mean_euphemism_rank": 1.0455
+        },
+        "40": {
+          "euphemism_rank1_rate": 0.989,
+          "mean_euphemism_rank": 1.0115
+        },
+        "50": {
+          "euphemism_rank1_rate": 0.999,
+          "mean_euphemism_rank": 1.001
+        },
+        "81": {
+          "euphemism_rank1_rate": 1.0,
+          "mean_euphemism_rank": 1
+        }
+      }
+    },
+    {
+      "judge": "granite-guard",
+      "model": "ibm-granite/granite-guardian-4.1-8b",
+      "literal_mean": 6.275,
+      "gate_valid": false,
+      "full_n": 80,
+      "n_operators": 6,
+      "by_size": {
+        "30": {
+          "euphemism_rank1_rate": 0.335,
+          "mean_euphemism_rank": 2.4695
+        },
+        "40": {
+          "euphemism_rank1_rate": 0.4085,
+          "mean_euphemism_rank": 2.1815
+        },
+        "50": {
+          "euphemism_rank1_rate": 0.434,
+          "mean_euphemism_rank": 2.023
+        },
+        "80": {
+          "euphemism_rank1_rate": 1.0,
+          "mean_euphemism_rank": 1
+        }
+      }
+    },
+    {
+      "judge": "granite41-8b",
+      "model": "ibm-granite/granite-4.1-8b",
+      "literal_mean": 5.0247,
+      "gate_valid": false,
+      "full_n": 81,
+      "n_operators": 6,
+      "by_size": {
+        "30": {
+          "euphemism_rank1_rate": 0.1655,
+          "mean_euphemism_rank": 2.958
+        },
+        "40": {
+          "euphemism_rank1_rate": 0.1225,
+          "mean_euphemism_rank": 2.938
+        },
+        "50": {
+          "euphemism_rank1_rate": 0.085,
+          "mean_euphemism_rank": 2.844
+        },
+        "81": {
+          "euphemism_rank1_rate": 0.0,
+          "mean_euphemism_rank": 2
+        }
+      }
+    },
+    {
+      "judge": "gemma4-12b",
+      "model": "google/gemma-4-12B-it",
+      "literal_mean": 0.5065,
+      "gate_valid": true,
+      "full_n": 68,
+      "n_operators": 6,
+      "by_size": {
+        "30": {
+          "euphemism_rank1_rate": 0.9985,
+          "mean_euphemism_rank": 1.0015
+        },
+        "40": {
+          "euphemism_rank1_rate": 1.0,
+          "mean_euphemism_rank": 1
+        },
+        "50": {
+          "euphemism_rank1_rate": 1.0,
+          "mean_euphemism_rank": 1
+        },
+        "68": {
+          "euphemism_rank1_rate": 1.0,
+          "mean_euphemism_rank": 1
+        }
+      }
+    }
+  ],
+  "summary_over_gate_valid_judges": {
+    "n=30": {
+      "judges": 3,
+      "mean_euphemism_rank_across_valid_judges": 1.0477
+    },
+    "n=40": {
+      "judges": 3,
+      "mean_euphemism_rank_across_valid_judges": 1.0128
+    },
+    "n=50": {
+      "judges": 3,
+      "mean_euphemism_rank_across_valid_judges": 1.0035
+    }
+  },
+  "live_panel_comparison": {
+    "live_chinese_mean_euphemism_rank": 2.33,
+    "live_western_mean_euphemism_rank": 1.83,
+    "live_per_operator_n_range": "27 to 47"
+  }
+}
