@@ -1,3 +1,33 @@
+> ### GOAI 2026 · Track 3 · Open Exploration · Team Guild (No. 12)
+> **本仓库即复赛提交作品 / This repository is the semi-final submission.** Frozen at tag
+> [`v1.0-goai-semifinal`](https://github.com/LarytheLord/values-laundering/releases/tag/v1.0-goai-semifinal).
+>
+> **三件套 / The three-piece set**
+> | | 位置 / Where |
+> |---|---|
+> | 最小可运行探索环境 · Minimal runnable exploration environment | [`environment/env.py`](environment/env.py) |
+> | 完整探索日志 · Complete exploration log | [`environment/exploration_log.jsonl`](environment/exploration_log.jsonl) |
+> | 参照系设计 · Reference-frame design | [`environment/random_baseline_summary.json`](environment/random_baseline_summary.json), plus UCB, a UCB exploration-constant sweep, and a budget sweep |
+>
+> **一键复现 / Reproduce in one command, no install, no API key, no network:**
+> ```bash
+> bash environment/scripts/smoke_test.sh       # environment self-test, seconds
+> bash environment/scripts/reproduce_core.sh   # regenerates campaign_summary.json byte-identically, ~3 s
+> ```
+>
+> **本次提交的核心发现 / The headline finding of this submission.** Euphemism ranks first in
+> 9 of 9 frozen judge-seed cells. Three controls then show that this is a property of the
+> **older model generation**, not of lineage, sample size or replay mode: mean euphemism rank is
+> 1.00 frozen, 1.05 frozen subsampled to n=30, 1.25 for frozen-era models run live, 1.83 for
+> current Western models and 2.33 for current Chinese models, where chance is 3.5. The finding
+> **overturned this project's own headline**, and the controls that did it were designed in
+> advance to be able to. See [`environment/live_panel_western/FINDINGS.md`](environment/live_panel_western/FINDINGS.md)
+> and [`environment/live_panel_samegen/FINDINGS.md`](environment/live_panel_samegen/FINDINGS.md).
+>
+> **可延续性 / To build on this:** [`EXTENDING.md`](EXTENDING.md) names the three seams, five open
+> questions, and what not to do. **Sixteen live models** across three panels; every number here
+> recomputes offline from committed artifacts.
+
 # One word does most of the work: how *euphemism* launders an LLM's moral judgment
 
 A small, honest, black-box study of how discourse framing bends a language model's moral verdicts. Everything here runs on free inference: no training, no gradients. Every number in this README is recomputed from the raw judged data, never copied from a draft.
