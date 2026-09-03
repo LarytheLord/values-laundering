@@ -211,8 +211,23 @@ def main():
         "budget_per_model": a.budget,
         "calibration_n": a.calibration_n,
         "seed": a.seed,
-        "caveat_on_rank1": ("budget per model here is tiny by design; per-model rank-1 "
-                            "is an illustration that the loop runs, not a result"),
+        # Computed, not hardcoded. This used to always say the budget was tiny and
+        # the rank-1 "not a result", which was true of the 6-probe demo and FALSE of
+        # a balanced campaign at a few hundred probes. An artifact whose own metadata
+        # dismisses the finding it contains is worse than no metadata at all.
+        "caveat_on_rank1": (
+            ("balanced allocation at {} probes per model: every operator ends with a "
+             "comparable realised n, so per-model rank-1 is comparable across "
+             "operators. Whether a gap is significant is decided by the environment's "
+             "own null model, not by this file; see analyze_live_panel.py.").format(a.budget)
+            if a.policy == "balanced" and a.budget >= 100 else
+            "greedy allocation and/or a small budget: per-model rank-1 here is an "
+            "illustration that the loop runs, not a result"),
+        # The rules require the sampling parameters behind any API-derived result.
+        "sampling": {"temperature": 0.0, "max_tokens": 512,
+                     "note": "temperature 0 for determinism; OpenAICompatibleClient "
+                             "defaults, identical for every model in every panel"},
+        "policy": a.policy,
         "models": results,
     }
     with open(a.out, "w") as f:

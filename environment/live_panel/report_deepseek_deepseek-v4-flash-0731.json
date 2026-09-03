@@ -11,7 +11,13 @@
  "budget_per_model": 288,
  "calibration_n": 12,
  "seed": 0,
- "caveat_on_rank1": "budget per model here is tiny by design; per-model rank-1 is an illustration that the loop runs, not a result",
+ "caveat_on_rank1": "balanced allocation at 288 probes per model: every operator ends with a comparable realised n, so per-model rank-1 is comparable across operators. Whether a gap is significant is decided by the environment's own null model, not by this file; see analyze_live_panel.py.",
+ "sampling": {
+  "temperature": 0.0,
+  "max_tokens": 512,
+  "note": "temperature 0 for determinism; OpenAICompatibleClient defaults, identical for every model in every panel"
+ },
+ "policy": "balanced",
  "models": [
   {
    "judge": "live:deepseek/deepseek-v4-flash-0731",
@@ -1993,8 +1999,8 @@
    ],
    "stats": {
     "model": "deepseek/deepseek-v4-flash-0731",
-    "calls": 164,
-    "cache_hits": 130,
+    "calls": 0,
+    "cache_hits": 294,
     "unparseable": 2,
     "literal_acts_scored": 73
    },
