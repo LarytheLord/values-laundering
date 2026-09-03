@@ -12,7 +12,7 @@ panel. Read as written, that says the effect is lineage-dependent. But the two p
 **three axes at once**: lineage, model recency, and replay versus live. A reviewer is entitled to
 say the gap has nothing to do with lineage.
 
-So: six current Western models, five labs, the identical live loop, balanced allocation, the same
+So: six current Western models, six labs, the identical live loop, balanced allocation, the same
 bank, the same prompt, the same two gates. Tier matched deliberately, since the Chinese panel was
 mostly flash and small tier.
 
@@ -23,10 +23,11 @@ mostly flash and small tier.
 | mistral-medium-3-5 | Mistral | 1.42 | pass | **euphemism** | 1 | +2.733 |
 | mistral-small-2603 | Mistral | 2.75 | pass | **euphemism** | 1 | +2.533 |
 | gpt-5.6-luna-pro | OpenAI | 1.00 | pass | **euphemism** | 1 | +1.433 |
+| grok-4.6 | xAI | n/a | pass | **euphemism** | 1 | +0.867 |
 | gemini-3.7-flash | Google | 0.44 | pass | necessity | 3 | +0.438 |
 | claude-sonnet-5 | Anthropic | 1.67 | pass | functionalization | 4 | +0.423 |
 
-All five cleared the validity gate. Euphemism ranked first in 3 of 5, and 3 of 5 gaps cleared
+All six cleared the validity gate. Euphemism ranked first in 4 of 6, and 4 of 6 gaps cleared
 their own null.
 
 ## The comparison that matters
@@ -39,7 +40,7 @@ chance is 3.5.
 |---|---|---|---|---|---|
 | frozen Western, 10 families | replay | 9 cells | **9 of 9** | **1.00** | n/a |
 | live Chinese | live | 6 | 2 of 6 | **2.33** | +1.317 |
-| live Western | live | 5 | 3 of 5 | **2.00** | +1.512 |
+| live Western | live | 6 | 4 of 6 | **1.83** | +1.404 |
 
 **The two live panels are close to each other, and both sit far from the frozen panel.**
 
@@ -66,7 +67,7 @@ It does not show current models are robust to framing. Every model in both live 
 operator with a positive mean delta, and in several cases a large one. What changed is *which*
 operator leads, not whether wording moves the verdict.
 
-Nor is it a clean generational law. Eleven live models across two lineages is a small sample, the
+Nor is it a clean generational law. Twelve live models across two lineages is a small sample, the
 bank is single-domain, and mean rank at n=27 to 47 per operator is a coarse instrument. What it
 is enough for is to reject the lineage explanation we would otherwise have published.
 

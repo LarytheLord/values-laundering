@@ -404,7 +404,7 @@ tier-matched. Mean euphemism rank across all six operators, where chance is 3.5:
 |---|---|---|---|
 | frozen Western, 10 families | replay | 9 of 9 | **1.00** |
 | live Chinese, 6 models | live | 2 of 6 | **2.33** |
-| live Western, 5 models | live | 3 of 5 | **2.00** |
+| live Western, 6 models | live | 4 of 6 | **1.83** |
 
 The two live panels are close to each other and far from the frozen one. **The axis is model
 generation, not lineage.** Euphemism sits around second of six in current models of both lineages,

@@ -224,21 +224,66 @@
       "H1_euphemism_rank1": true,
       "H2_gap_clears_null": false,
       "threshold_flips": 9
+    },
+    {
+      "model": "x-ai/grok-4.6",
+      "provider": "openrouter",
+      "policy": "balanced",
+      "error": null,
+      "literal_mean": 1.1666666666666667,
+      "instrument_valid": true,
+      "n_probes": 221,
+      "status": "analysed",
+      "per_operator": {
+        "agent_deletion": {
+          "mean_delta": -0.1489,
+          "n": 47
+        },
+        "nominalization": {
+          "mean_delta": 0.1,
+          "n": 40
+        },
+        "functionalization": {
+          "mean_delta": 0.1852,
+          "n": 27
+        },
+        "euphemism": {
+          "mean_delta": 0.8667,
+          "n": 30
+        },
+        "necessity": {
+          "mean_delta": 0.375,
+          "n": 40
+        },
+        "aggregation": {
+          "mean_delta": 0.0541,
+          "n": 37
+        }
+      },
+      "n_min": 27,
+      "n_max": 47,
+      "rank1": "euphemism",
+      "rank2": "necessity",
+      "gap": 0.4917,
+      "null_gap_p95": 0.4407,
+      "H1_euphemism_rank1": true,
+      "H2_gap_clears_null": true,
+      "threshold_flips": 9
     }
   ],
   "trials": 2000,
   "seed": 0,
   "summary": {
-    "models_reported": 5,
-    "cleared_gate": 5,
+    "models_reported": 6,
+    "cleared_gate": 6,
     "excluded_by_gate": 0,
     "errored": 0,
-    "H1_euphemism_rank1": 3,
-    "H2_clears_null": 3,
+    "H1_euphemism_rank1": 4,
+    "H2_clears_null": 4,
     "rank1_counts": {
       "functionalization": 1,
       "necessity": 1,
-      "euphemism": 3
+      "euphemism": 4
     }
   }
 }
