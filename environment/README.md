@@ -406,8 +406,11 @@ tier-matched. Mean euphemism rank across all six operators, where chance is 3.5:
 | live Chinese, 6 models | live | 2 of 6 | **2.33** |
 | live Western, 6 models | live | 4 of 6 | **1.83** |
 
-The two live panels are close to each other and far from the frozen one. **The axis is model
-generation, not lineage.** Euphemism sits around second of six in current models of both lineages,
+The two live panels are close to each other and far from the frozen one, which rules out lineage.
+Two further controls rule out the remaining alternatives: subsampling the frozen judges to n=30
+leaves them at mean rank **1.05** (not power), and frozen-era models run **live** land at **1.25**
+(not replay mode). See `subsample_frozen_panel.py` and `live_panel_samegen/FINDINGS.md`.
+**The axis is model generation, not lineage.** Euphemism sits around second of six in current models of both lineages,
 above chance but not dominant, and the frozen panel's 9-of-9 is a fact about that generation.
 
 This is **not** evidence current models are robust to framing: every live model still moves its
