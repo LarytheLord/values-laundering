@@ -28,7 +28,7 @@
 > questions, and what not to do. **Sixteen live models** across three panels; every number here
 > recomputes offline from committed artifacts.
 
-# One word does most of the work: how *euphemism* launders an LLM's moral judgment
+# One word did most of the work, in one generation of models: how *euphemism* launders an LLM's moral judgment
 
 A small, honest, black-box study of how discourse framing bends a language model's moral verdicts. Everything here runs on free inference: no training, no gradients. Every number in this README is recomputed from the raw judged data, never copied from a draft.
 
@@ -37,7 +37,7 @@ A small, honest, black-box study of how discourse framing bends a language model
 
 **研究问题**：当一个有害行为本身保持不变、只改变描述它的措辞时，大模型评判器（LLM-as-judge）的道德判断会不会改变？
 
-**核心结论**：会，而且只有一种改写方式能可靠地做到。我们用批评话语分析（van Leeuwen）中的六种改写操作——委婉语、施事省略、名词化、功能化、必要性论证、聚合化——分别改写同一个行为，再让评判器重新打分。**在通过工具效度检验的全部十个模型家族中，委婉语的排名都是第一**，与第二名的差距在自助法 95% 置信区间下均不含零。模型规模更大、发布时间更新、经过安全微调，都没有表现出防护作用。
+**核心结论**：会。在冻结的十个模型家族中，只有一种改写方式能可靠地做到。我们用批评话语分析（van Leeuwen）中的六种改写操作——委婉语、施事省略、名词化、功能化、必要性论证、聚合化——分别改写同一个行为，再让评判器重新打分。**在通过工具效度检验的全部十个模型家族中，委婉语的排名都是第一**，与第二名的差距在自助法 95% 置信区间下均不含零。模型规模更大、经过安全微调，都没有表现出防护作用。**但模型代际有影响**：三项对照实验表明，委婉语的主导地位属于较早的一代模型；在十六个当前模型上实测，委婉语的平均排名为 1.83 至 2.33（六选一，随机期望为 3.5），而非第一。详见 `environment/live_panel_western/FINDINGS.md`。
 
 **为什么重要**：大模型评判器被广泛用于筛选训练语料和为 RLHF/DPO 生成偏好数据。一个仅凭改写措辞就能被说服改变判断的评判器，构成的是训练数据投毒面，而非单纯的伦理问题——攻击不需要梯度、不需要模型权限，载荷是普通的行业用语，没有困惑度特征可供过滤器识别。
 
@@ -53,7 +53,7 @@ A small, honest, black-box study of how discourse framing bends a language model
 
 ## The one-sentence result
 
-Take a harmful act a language model has just called clearly wrong. Rewrite it using one of the discourse-framing moves that critical-discourse-analysis has catalogued for decades (passive voice to hide the agent, statistics to blur the suffering, economic labels for the victims, or **euphemism** to soften the verb), and re-ask the model. **Only one of those moves reliably changes the model's verdict, and it's euphemism.** Not syntax, not aggregation, not authority-framing. Softening the *word* for the act is the load-bearing move, and stacking the others on top doesn't help; it makes things worse.
+Take a harmful act a language model has just called clearly wrong. Rewrite it using one of the discourse-framing moves that critical-discourse-analysis has catalogued for decades (passive voice to hide the agent, statistics to blur the suffering, economic labels for the victims, or **euphemism** to soften the verb), and re-ask the model. **Across the ten frozen judge families, only one of those moves reliably changed the model's verdict, and it was euphemism.** Not syntax, not aggregation, not authority-framing. Softening the *word* for the act was the load-bearing move there, and stacking the others on top didn't help; it made things worse. **That dominance turns out to be a property of that generation of models.** Sixteen current models run live put euphemism at mean rank 1.83 to 2.33 of six rather than first; see the banner above and `environment/live_panel_western/FINDINGS.md`.
 
 ## Why this matters now
 
@@ -105,7 +105,7 @@ This is a construct-validity precondition, not a novel idea on our part — it o
 
 ## The original three findings (N=81/78, single judge family)
 
-**The claim:** euphemism — lexical softening of the violent act itself — is the single load-bearing laundering move. Values-laundering here is a one-move *lexical* phenomenon, not a compositional or syntactic one.
+**The claim, as originally stated:** euphemism, lexical softening of the violent act itself, is the single load-bearing laundering move, and values-laundering is a one-move *lexical* phenomenon rather than a compositional or syntactic one. **Scope correction:** that holds across the ten frozen families, which are all of one model generation. Three controls reported in `environment/live_panel_western/FINDINGS.md` and `environment/live_panel_samegen/FINDINGS.md` show it does not carry to current models of either lineage, where euphemism sits near rank 2 of 6. The effect is real and it is generation-dependent.
 
 **1. Euphemism dominates — cross-family, at N=81.** Of the six moves, euphemism is rank #1 at raising acceptability, by a clear margin (`results/crossfamily_bigN_gemma.json`):
 
