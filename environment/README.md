@@ -561,7 +561,7 @@ tests/test_env.py                   pytest regression suite: the validity gate, 
 tests/README.md                     what each test class defends against and why
 ```
 
-Run the tests with `pytest environment/tests/test_env.py -v` (75 tests, all passing against a synthetic
+Run the tests with `pytest environment/tests/test_env.py -v` (101 tests, all passing against a synthetic
 fixture bank, not the real act data, so they stay fast and don't depend on the competition data file's contents).
 The 40 live-mode tests are fully offline: they run in CI with no API key and no network.
 
