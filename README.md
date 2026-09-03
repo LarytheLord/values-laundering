@@ -201,6 +201,11 @@ Where this work is being contributed back, rather than just published:
   and [interactive Space](https://huggingface.co/spaces/LarytheLord/values-laundering-explorer).
 - **UK AISI `inspect_evals`** — a companion evaluation was proposed to their register (see below).
 
+**Continuing this work:** [`EXTENDING.md`](EXTENDING.md) is a handover document. It names the
+three seams (swap the act bank, swap the judge, swap the policy), lists the five open questions
+the code is already set up to answer with the unsettled generational question first, and states
+what not to do, including the two mistakes this project actually made.
+
 Reusable independently of this study: the six-operator rewrite taxonomy and act bank
 (`data/kernel_payload.json`), the instrument-validity gate as a general precondition for any
 LLM-judge benchmark, and the exploration environment itself as a template for
