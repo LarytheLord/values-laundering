@@ -373,6 +373,49 @@ it would need a differently worded prompt than the one that produced the frozen 
 changing the prompt to gain a nice-to-have field would destroy the only property that makes
 live and replay comparable.
 
+## Does the euphemism result hold on Chinese model lineages? No.
+
+Every one of the ten instrument-valid judge families in the frozen data is Western: seven labs,
+two years, no Chinese lab. So the environment was pointed at six Chinese models, from six labs,
+all released in 2026. The analysis plan is in `CHINESE_PANEL_PREREGISTRATION.md` and was committed
+before the first API call.
+
+Nothing in the environment changed. Same bank, same six operators, same scoring prompt, same
+validity gate at 4.0, same overlap floor at 0.15. Only the judge changed.
+
+| model | lab | literal mean | gate | rank-1 | gap | null p95 | clears |
+|---|---|---|---|---|---|---|---|
+| deepseek-v4-flash-0731 | DeepSeek | 0.42 | pass | **euphemism** | 0.749 | 0.690 | **yes** |
+| hy3 | Tencent | 0.42 | pass | functionalization | 0.659 | 0.618 | **yes** |
+| kimi-k2.6 | Moonshot | 0.42 | pass | necessity | 0.150 | 0.922 | no |
+| minimax-m3 | MiniMax | 0.83 | pass | **euphemism** | 0.100 | 0.582 | no |
+| hy4-preview | Tencent | 1.08 | pass | necessity | 0.100 | 1.460 | no |
+| glm-5.3-flash | Zhipu | 2.00 | pass | functionalization | 0.125 | 1.186 | no |
+
+**All six cleared the gate. Euphemism ranked first in 2 of 6, and 2 of 6 gaps cleared their own
+null. Rank-1 splits three ways.** Against the frozen Western panel under the same balanced
+allocation: euphemism 9 of 9, six of nine clearing.
+
+The effect is lineage-dependent. It is not absent, since it holds on DeepSeek and two separate
+DeepSeek models agree. It does not hold as a general claim.
+
+This is **not** a sample-size artifact: which operator ranks first does not depend on n, and the
+null thresholds here (0.58 to 1.46) sit in the same range as the frozen balanced baseline's. It is
+also **not** evidence these models are more robust to framing, because at this bank size a diffuse
+effect and a smaller one are indistinguishable.
+
+Full writeup and per-model artifacts: `live_panel/FINDINGS.md`, `live_panel/report_*.json`,
+`live_panel/live_panel_analysis.json`. Reproduce the analysis offline, no key needed:
+
+```bash
+python3 environment/analyze_live_panel.py --reports "environment/live_panel/report_*.json"
+```
+
+Regenerating the reports needs an API key and `--policy balanced`. The default policy is greedy,
+which reproduces the frozen campaign but concentrates budget on the current leader; a first
+attempt at this panel on greedy returned n=194 on one operator and n=1 on four others, and no
+cross-operator rank claim can be built on that.
+
 ## The agent in here is deliberately simple, and its bug is on the record
 
 `greedy_agent()` probes every unprobed (judge, operator) cell once (breadth), then spends
