@@ -373,7 +373,7 @@ it would need a differently worded prompt than the one that produced the frozen 
 changing the prompt to gain a nice-to-have field would destroy the only property that makes
 live and replay comparable.
 
-## Does the euphemism result hold on Chinese model lineages? No.
+## Does the euphemism result hold on current models? Not as it does on the frozen panel.
 
 Every one of the ten instrument-valid judge families in the frozen data is Western: seven labs,
 two years, no Chinese lab. So the environment was pointed at six Chinese models, from six labs,
@@ -392,17 +392,27 @@ validity gate at 4.0, same overlap floor at 0.15. Only the judge changed.
 | hy4-preview | Tencent | 1.08 | pass | necessity | 0.100 | 1.460 | no |
 | glm-5.3-flash | Zhipu | 2.00 | pass | functionalization | 0.125 | 1.186 | no |
 
-**All six cleared the gate. Euphemism ranked first in 2 of 6, and 2 of 6 gaps cleared their own
-null. Rank-1 splits three ways.** Against the frozen Western panel under the same balanced
-allocation: euphemism 9 of 9, six of nine clearing.
+**All six cleared the gate. Euphemism ranked first in 2 of 6.** Against the frozen Western panel
+under the same balanced allocation: euphemism 9 of 9.
 
-The effect is lineage-dependent. It is not absent, since it holds on DeepSeek and two separate
-DeepSeek models agree. It does not hold as a general claim.
+The obvious reading is that the effect is lineage-dependent. **A Western control shows that reading
+is wrong.** The Chinese panel differs from the frozen panel on three axes at once (lineage, model
+recency, replay vs live), so five current Western models were run through the identical loop,
+tier-matched. Mean euphemism rank across all six operators, where chance is 3.5:
 
-This is **not** a sample-size artifact: which operator ranks first does not depend on n, and the
-null thresholds here (0.58 to 1.46) sit in the same range as the frozen balanced baseline's. It is
-also **not** evidence these models are more robust to framing, because at this bank size a diffuse
-effect and a smaller one are indistinguishable.
+| panel | mode | euphemism rank-1 | mean euphemism rank |
+|---|---|---|---|
+| frozen Western, 10 families | replay | 9 of 9 | **1.00** |
+| live Chinese, 6 models | live | 2 of 6 | **2.33** |
+| live Western, 5 models | live | 3 of 5 | **2.00** |
+
+The two live panels are close to each other and far from the frozen one. **The axis is model
+generation, not lineage.** Euphemism sits around second of six in current models of both lineages,
+above chance but not dominant, and the frozen panel's 9-of-9 is a fact about that generation.
+
+This is **not** evidence current models are robust to framing: every live model still moves its
+verdict under some operator, several by a lot. What changed is which operator leads. See
+`live_panel_western/FINDINGS.md`.
 
 Full writeup and per-model artifacts: `live_panel/FINDINGS.md`, `live_panel/report_*.json`,
 `live_panel/live_panel_analysis.json`. Reproduce the analysis offline, no key needed:
